@@ -3,48 +3,33 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Nagpur GeoPortal | Sachin Chaudhari GIS</title>
 
-
-<!-- =========================
-     LEAFLET CSS
-========================= -->
-
+<!-- Leaflet -->
 <link
 rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 />
 
-
-<!-- =========================
-     GEOCODER CSS
-========================= -->
-
+<!-- Leaflet Geocoder -->
 <link
 rel="stylesheet"
 href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"
 />
 
-
-<!-- =========================
-     MEASURE CSS
-========================= -->
-
+<!-- Leaflet Measure -->
 <link
 rel="stylesheet"
 href="https://unpkg.com/leaflet-measure/dist/leaflet-measure.css"
 />
 
-
 <style>
 
 /* =========================
-   GENERAL
+   BASIC PAGE
 ========================= */
 
 *{
@@ -57,112 +42,47 @@ body{
     padding:0;
     width:100%;
     height:100%;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f4f7fa;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow:hidden;
 }
 
 
 /* =========================
-   BLUE HEADER
+   HEADER
 ========================= */
 
-header{
-
-    background:linear-gradient(
-        135deg,
-        #123b5d,
-        #0b6e8e
-    );
-
+.header{
+    height:145px;
+    background:linear-gradient(135deg,#063b73,#0878b9);
     color:white;
-
-    padding:15px 22px;
-
-    box-shadow:
-        0 2px 8px
-        rgba(0,0,0,0.20);
-
+    padding:18px 25px;
+    position:relative;
+    z-index:2000;
 }
 
-
-/* =========================
-   TITLE
-========================= */
-
-header h1{
-
-    margin:0;
-
-    font-size:27px;
-
+.header-title{
+    font-size:28px;
     font-weight:bold;
-
+    margin-bottom:5px;
 }
 
-
-/* =========================
-   LOCATION
-========================= */
-
-header .location{
-
-    margin-top:5px;
-
+.header-location{
     font-size:15px;
-
-    font-weight:bold;
-
+    margin-bottom:4px;
 }
 
-
-/* =========================
-   SUBTITLE
-========================= */
-
-header .subtitle{
-
-    margin-top:4px;
-
-    font-size:13px;
-
+.header-subtitle{
+    font-size:14px;
+    opacity:0.95;
 }
-
-
-/* =========================
-   PORTAL INFORMATION
-========================= */
 
 .portal-info{
-
-    margin-top:10px;
-
-    padding:10px 12px;
-
-    background:
-        rgba(255,255,255,0.12);
-
-    border:
-        1px solid
-        rgba(255,255,255,0.25);
-
+    margin-top:12px;
+    padding:9px 14px;
+    background:rgba(255,255,255,0.15);
     border-radius:7px;
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:8px 25px;
-
-    font-size:12px;
-
-    line-height:1.5;
-
-}
-
-.portal-info span{
-
-    color:white;
-
+    font-size:13px;
+    display:inline-block;
 }
 
 
@@ -171,49 +91,29 @@ header .subtitle{
 ========================= */
 
 .toolbar{
-
-    background:white;
-
-    padding:10px 15px;
-
-    border-bottom:
-        1px solid #ddd;
-
-    box-shadow:
-        0 1px 4px
-        rgba(0,0,0,0.12);
-
+    height:48px;
+    background:#ffffff;
     display:flex;
-
-    flex-wrap:wrap;
-
-    gap:7px;
-
+    align-items:center;
+    gap:8px;
+    padding:6px 12px;
+    box-shadow:0 2px 7px rgba(0,0,0,0.20);
+    position:relative;
+    z-index:2000;
 }
-
 
 .toolbar button{
-
-    padding:9px 14px;
-
-    border:
-        1px solid #cbd5dc;
-
-    background:white;
-
-    border-radius:6px;
-
+    border:none;
+    background:#0b65a3;
+    color:white;
+    padding:8px 13px;
+    border-radius:5px;
     cursor:pointer;
-
-    font-weight:bold;
-
+    font-size:13px;
 }
 
-
 .toolbar button:hover{
-
-    background:#eaf3f8;
-
+    background:#084d7c;
 }
 
 
@@ -222,12 +122,12 @@ header .subtitle{
 ========================= */
 
 #map{
-
-    height:
-        calc(100vh - 190px);
-
-    width:100%;
-
+    position:absolute;
+    top:193px;
+    bottom:32px;
+    left:0;
+    right:0;
+    z-index:1;
 }
 
 
@@ -236,175 +136,75 @@ header .subtitle{
 ========================= */
 
 .gis-panel{
-
     position:absolute;
-
-    /*
-       IMPORTANT:
-       Panel is placed below
-       the Leaflet base-map control.
-    */
-
-    top:330px;
-
+    top:335px;
     right:15px;
-
-    z-index:1000;
-
     width:245px;
-
-    background:
-        rgba(255,255,255,0.97);
-
+    background:rgba(255,255,255,0.97);
     border-radius:9px;
-
-    box-shadow:
-        0 3px 15px
-        rgba(0,0,0,0.25);
-
+    box-shadow:0 3px 15px rgba(0,0,0,0.28);
     overflow:hidden;
-
+    z-index:1500;
 }
-
-
-/* =========================
-   GIS PANEL HEADER
-========================= */
 
 .gis-panel-header{
-
-    background:
-        linear-gradient(
-            135deg,
-            #123b5d,
-            #0b6e8e
-        );
-
+    background:#075c96;
     color:white;
-
-    padding:11px 13px;
-
-    font-size:15px;
-
+    padding:11px 14px;
     font-weight:bold;
-
+    font-size:15px;
 }
-
-
-/* =========================
-   GIS PANEL BODY
-========================= */
 
 .gis-panel-body{
-
-    padding:10px 12px;
-
+    padding:7px 0;
 }
-
-
-/* =========================
-   LAYER ITEM
-========================= */
 
 .layer-item{
-
     display:flex;
-
     align-items:center;
-
-    gap:9px;
-
-    padding:8px 5px;
-
-    border-bottom:
-        1px solid #eeeeee;
-
-    font-size:13px;
-
+    gap:8px;
+    padding:9px 12px;
     cursor:pointer;
-
+    border-bottom:1px solid #eeeeee;
+    font-size:13px;
 }
-
 
 .layer-item:last-child{
-
     border-bottom:none;
-
 }
-
 
 .layer-item:hover{
-
-    background:#f2f7fa;
-
+    background:#f1f7fb;
 }
-
-
-/* =========================
-   CHECKBOX
-========================= */
 
 .layer-item input{
-
-    width:16px;
-
-    height:16px;
-
     cursor:pointer;
-
 }
-
-
-/* =========================
-   LAYER ICON
-========================= */
 
 .layer-icon{
-
-    font-size:17px;
-
+    width:22px;
+    text-align:center;
 }
-
-
-/* =========================
-   LAYER NAME
-========================= */
 
 .layer-name{
-
-    font-weight:bold;
-
-    color:#263746;
-
+    flex:1;
 }
 
 
 /* =========================
-   STATUS
+   STATUS BAR
 ========================= */
 
-.status{
-
+#status{
     position:absolute;
-
-    z-index:1000;
-
-    bottom:28px;
-
-    left:15px;
-
-    background:white;
-
-    padding:8px 12px;
-
-    border-radius:6px;
-
-    box-shadow:
-        0 2px 8px
-        rgba(0,0,0,0.20);
-
+    left:10px;
+    bottom:42px;
+    background:rgba(0,0,0,0.72);
+    color:white;
+    padding:7px 12px;
+    border-radius:5px;
     font-size:12px;
-
+    z-index:1600;
 }
 
 
@@ -412,103 +212,88 @@ header .subtitle{
    FOOTER
 ========================= */
 
-footer{
-
-    position:fixed;
-
+.footer{
+    position:absolute;
     bottom:0;
-
-    right:10px;
-
-    z-index:1000;
-
-    background:
-        rgba(255,255,255,0.92);
-
-    padding:4px 9px;
-
-    font-size:11px;
-
+    left:0;
+    right:0;
+    height:32px;
+    background:#063b73;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    z-index:2000;
 }
 
 
 /* =========================
-   MOBILE
+   LEAFLET CONTROL POSITION
+========================= */
+
+.leaflet-control-layers{
+    margin-top:10px !important;
+}
+
+
+/* =========================
+   MOBILE SCREEN
 ========================= */
 
 @media(max-width:600px){
 
-    header{
-
-        padding:13px 15px;
-
+    .header{
+        height:150px;
+        padding:14px 15px;
     }
 
-
-    header h1{
-
+    .header-title{
         font-size:21px;
-
     }
 
-
-    header .location{
-
+    .header-location{
         font-size:13px;
-
     }
 
-
-    header .subtitle{
-
-        font-size:11px;
-
+    .header-subtitle{
+        font-size:12px;
     }
-
 
     .portal-info{
-
-        padding:8px 10px;
-
-        gap:5px 12px;
-
-        font-size:10px;
-
+        font-size:11px;
+        margin-top:8px;
+        padding:7px 9px;
     }
 
+    .toolbar{
+        height:48px;
+        gap:4px;
+        padding:5px;
+        overflow-x:auto;
+    }
 
     .toolbar button{
-
-        padding:8px 10px;
-
-        font-size:12px;
-
+        white-space:nowrap;
+        padding:7px 9px;
+        font-size:11px;
     }
-
 
     #map{
-
-        height:
-            calc(100vh - 220px);
-
+        top:198px;
     }
-
-
-    /*
-       Mobile layer panel
-       placed below base-map control
-    */
 
     .gis-panel{
-
-        top:360px;
-
+        top:340px;
         right:8px;
-
         width:215px;
-
     }
 
+    #status{
+        bottom:42px;
+        left:6px;
+        font-size:11px;
+    }
 }
 
 
@@ -518,466 +303,349 @@ footer{
 
 @media(max-width:400px){
 
-    .gis-panel{
-
-        top:375px;
-
-        width:200px;
-
+    .header{
+        height:155px;
+        padding:12px;
     }
 
+    .header-title{
+        font-size:19px;
+    }
+
+    .header-location{
+        font-size:12px;
+    }
+
+    .header-subtitle{
+        font-size:11px;
+    }
+
+    .portal-info{
+        font-size:10px;
+        padding:6px 8px;
+    }
+
+    .toolbar{
+        height:48px;
+    }
+
+    .toolbar button{
+        font-size:10px;
+        padding:6px 8px;
+    }
+
+    #map{
+        top:203px;
+    }
+
+    .gis-panel{
+        top:350px;
+        right:6px;
+        width:200px;
+    }
+
+    .gis-panel-header{
+        font-size:13px;
+        padding:9px 11px;
+    }
+
+    .layer-item{
+        font-size:11px;
+        padding:8px 9px;
+    }
 }
 
 </style>
-
 </head>
 
 
 <body>
 
 
-<!-- =====================================================
+<!-- =========================
      HEADER
-===================================================== -->
+========================= -->
 
-<header>
+<div class="header">
 
-    <h1>
+    <div class="header-title">
         🗺️ Nagpur GeoPortal
-    </h1>
+    </div>
 
-
-    <div class="location">
-
+    <div class="header-location">
         📍 Nagpur, Maharashtra, India
-
     </div>
 
-
-    <div class="subtitle">
-
-        GIS Mapping & Spatial Analysis |
-        Sachin Chaudhari GIS
-
+    <div class="header-subtitle">
+        GIS Mapping & Spatial Analysis | Sachin Chaudhari GIS
     </div>
-
-
-    <!-- =========================
-         PORTAL INFORMATION
-    ========================= -->
 
     <div class="portal-info">
-
-        <span>
-
-            <b>Platform:</b>
-            Web GIS
-
-        </span>
-
-
-        <span>
-
-            <b>Developer:</b>
-            Sachin Chaudhari GIS
-
-        </span>
-
-
-        <span>
-
-            <b>Applications:</b>
-            GIS • Remote Sensing • Spatial Analysis
-
-        </span>
-
+        <b>Platform:</b> Web GIS
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <b>Developer:</b> Sachin Chaudhari GIS
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <b>Applications:</b> GIS • Remote Sensing • Spatial Analysis
     </div>
-
-</header>
-
-
-<!-- =====================================================
-     TOOLBAR
-===================================================== -->
-
-<div class="toolbar">
-
-
-    <button onclick="zoomNagpur()">
-
-        📍 Nagpur
-
-    </button>
-
-
-    <button onclick="zoomIndia()">
-
-        🇮🇳 India
-
-    </button>
-
-
-    <button onclick="locateUser()">
-
-        📌 My Location
-
-    </button>
-
-
-    <button onclick="showNagpurInfo()">
-
-        ℹ️ Nagpur Info
-
-    </button>
-
 
 </div>
 
 
-<!-- =====================================================
+<!-- =========================
+     TOOLBAR
+========================= -->
+
+<div class="toolbar">
+
+    <button onclick="goNagpur()">
+        📍 Nagpur
+    </button>
+
+    <button onclick="goIndia()">
+        🇮🇳 India
+    </button>
+
+    <button onclick="locateUser()">
+        📌 My Location
+    </button>
+
+    <button onclick="showNagpurInfo()">
+        ℹ️ Nagpur Info
+    </button>
+
+</div>
+
+
+<!-- =========================
      MAP
-===================================================== -->
+========================= -->
 
 <div id="map"></div>
 
 
-<!-- =====================================================
-     GIS LAYERS PANEL
-===================================================== -->
+<!-- =========================
+     GIS LAYERS
+========================= -->
 
 <div class="gis-panel">
 
-
     <div class="gis-panel-header">
-
         🗂️ GIS Layers
-
     </div>
-
 
     <div class="gis-panel-body">
 
-
-        <!-- ROADS -->
-
         <label class="layer-item">
 
             <input
-            type="checkbox"
-            id="roadsLayer"
-            onchange="toggleLayer('roads')"
+                type="checkbox"
+                id="roadsLayer"
+                onchange="toggleLayer('roads')"
             >
 
-            <span class="layer-icon">
-
-                🛣️
-
-            </span>
+            <span class="layer-icon">🛣️</span>
 
             <span class="layer-name">
-
                 Roads
-
             </span>
 
         </label>
 
 
-        <!-- RAILWAY -->
-
         <label class="layer-item">
 
             <input
-            type="checkbox"
-            id="railwayLayer"
-            onchange="toggleLayer('railway')"
+                type="checkbox"
+                id="railwayLayer"
+                onchange="toggleLayer('railway')"
             >
 
-            <span class="layer-icon">
-
-                🚆
-
-            </span>
+            <span class="layer-icon">🚆</span>
 
             <span class="layer-name">
-
                 Railway
-
             </span>
 
         </label>
 
 
-        <!-- WATER -->
-
         <label class="layer-item">
 
             <input
-            type="checkbox"
-            id="waterLayer"
-            onchange="toggleLayer('water')"
+                type="checkbox"
+                id="waterLayer"
+                onchange="toggleLayer('water')"
             >
 
-            <span class="layer-icon">
-
-                💧
-
-            </span>
+            <span class="layer-icon">💧</span>
 
             <span class="layer-name">
-
                 Water Bodies
-
             </span>
 
         </label>
 
 
-        <!-- LAND USE -->
-
         <label class="layer-item">
 
             <input
-            type="checkbox"
-            id="landuseLayer"
-            onchange="toggleLayer('landuse')"
+                type="checkbox"
+                id="landuseLayer"
+                onchange="toggleLayer('landuse')"
             >
 
-            <span class="layer-icon">
-
-                🌳
-
-            </span>
+            <span class="layer-icon">🌳</span>
 
             <span class="layer-name">
-
                 Land Use / Land Cover
-
             </span>
 
         </label>
 
-
-        <!-- ADMINISTRATIVE -->
 
         <label class="layer-item">
 
             <input
-            type="checkbox"
-            id="boundaryLayer"
-            onchange="toggleLayer('boundary')"
+                type="checkbox"
+                id="boundaryLayer"
+                onchange="toggleLayer('boundary')"
             >
 
-            <span class="layer-icon">
-
-                🏛️
-
-            </span>
+            <span class="layer-icon">🏛️</span>
 
             <span class="layer-name">
-
                 Administrative Boundary
-
             </span>
 
         </label>
-
 
     </div>
 
 </div>
 
 
-<!-- =====================================================
+<!-- =========================
      STATUS
-===================================================== -->
+========================= -->
 
-<div
-class="status"
-id="status">
-
+<div id="status">
     Ready — Nagpur GeoPortal
-
 </div>
 
 
-<!-- =====================================================
+<!-- =========================
      FOOTER
-===================================================== -->
+========================= -->
 
-<footer>
-
+<div class="footer">
     © 2026 Sachin Chaudhari GIS
+</div>
 
-</footer>
 
-
-<!-- =====================================================
+<!-- =========================
      LEAFLET JS
-===================================================== -->
+========================= -->
 
-<script
-src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
-<!-- =====================================================
+<!-- =========================
      GEOCODER JS
-===================================================== -->
+========================= -->
 
-<script
-src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js">
-</script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 
-<!-- =====================================================
+<!-- =========================
      MEASURE JS
-===================================================== -->
+========================= -->
 
-<script
-src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js">
-</script>
+<script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
 
 
 <script>
 
-/* =====================================================
-   NAGPUR COORDINATES
-===================================================== */
+/* =========================
+   NAGPUR LOCATION
+========================= */
 
-var nagpur = [
-
-    21.1458,
-    79.0882
-
-];
+var nagpur = [21.1458,79.0882];
 
 
-/* =====================================================
+/* =========================
    CREATE MAP
-===================================================== */
+========================= */
 
-var map = L.map("map").setView(
-
-    nagpur,
-
-    11
-
-);
+var map = L.map("map").setView(nagpur,11);
 
 
-/* =====================================================
-   OPEN STREET MAP
-===================================================== */
+/* =========================
+   BASE MAPS
+========================= */
 
 var osm = L.tileLayer(
-
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
     {
-
         maxZoom:19,
-
-        attribution:
-        "&copy; OpenStreetMap contributors"
-
+        attribution:"&copy; OpenStreetMap contributors"
     }
-
 );
-
-
-/* =====================================================
-   SATELLITE
-===================================================== */
 
 var satellite = L.tileLayer(
-
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-
     {
-
         maxZoom:19,
-
-        attribution:
-        "Tiles &copy; Esri"
-
+        attribution:"Tiles &copy; Esri"
     }
-
 );
-
-
-/* =====================================================
-   ESRI STREETS
-===================================================== */
 
 var streets = L.tileLayer(
-
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-
     {
-
         maxZoom:19,
-
-        attribution:
-        "Tiles &copy; Esri"
-
+        attribution:"Tiles &copy; Esri"
     }
-
 );
 
 
-/* =====================================================
-   DEFAULT MAP
-===================================================== */
+/* Default map */
 
 osm.addTo(map);
 
 
-/* =====================================================
-   BASE MAP CONTROL
-===================================================== */
+/* Base map control */
 
 var baseMaps = {
 
-    "OpenStreetMap": osm,
+    "OpenStreetMap":osm,
 
-    "Satellite Imagery": satellite,
+    "Satellite Imagery":satellite,
 
-    "Esri Streets": streets
+    "Esri Streets":streets
 
 };
 
-
 L.control.layers(
-
     baseMaps,
-
     null,
-
     {
-
-        collapsed:false
-
+        collapsed:false,
+        position:"topright"
     }
-
 ).addTo(map);
 
 
-/* =====================================================
+/* =========================
    NAGPUR MARKER
-===================================================== */
+========================= */
 
-var nagpurMarker = L.marker(
-
-    nagpur
-
-)
+var nagpurMarker = L.marker(nagpur)
 .addTo(map)
 .bindPopup(
 
     "<b>🗺️ Nagpur GeoPortal</b>" +
 
-    "<br>📍 Nagpur, Maharashtra, India" +
+    "<br>📍 Nagpur, Maharashtra, India>" +
 
     "<br><br>" +
 
@@ -988,270 +656,180 @@ var nagpurMarker = L.marker(
 );
 
 
-/* =====================================================
-   NAGPUR STUDY AREA
-===================================================== */
+/* =========================
+   15 KM STUDY AREA
+========================= */
 
 var nagpurCircle = L.circle(
 
     nagpur,
 
     {
-
         radius:15000,
-
         weight:2,
-
         fillOpacity:0.05
-
     }
 
 ).addTo(map);
 
 
-/* =====================================================
-   SEARCH CONTROL
-===================================================== */
+/* =========================
+   SEARCH
+========================= */
 
 L.Control.geocoder({
 
     defaultMarkGeocode:true,
 
-    placeholder:
-    "Search location..."
+    placeholder:"Search location..."
 
 }).addTo(map);
 
 
-/* =====================================================
-   MEASURE CONTROL
-===================================================== */
+/* =========================
+   MEASURE TOOL
+========================= */
 
-var measureControl =
-new L.Control.Measure({
+var measureControl = new L.Control.Measure({
 
-    primaryLengthUnit:
-    "kilometers",
+    primaryLengthUnit:"kilometers",
 
-    secondaryLengthUnit:
-    "meters",
+    secondaryLengthUnit:"meters",
 
-    primaryAreaUnit:
-    "hectares",
+    primaryAreaUnit:"hectares",
 
-    secondaryAreaUnit:
-    "sqmeters",
+    secondaryAreaUnit:"sqmeters",
 
-    activeColor:
-    "#136AEC",
+    activeColor:"#136AEC",
 
-    completedColor:
-    "#2A93EE"
+    completedColor:"#2A93EE"
 
 });
-
 
 measureControl.addTo(map);
 
 
-/* =====================================================
-   ROADS LAYER
-===================================================== */
+/* =========================
+   SAMPLE GIS LAYERS
+========================= */
 
-var roadsLayer =
-L.layerGroup();
 
+/* Roads */
+
+var roadsLayer = L.layerGroup();
 
 L.polyline(
 
     [
-
         [21.1458,79.0882],
-
-        [21.1550,79.1000],
-
-        [21.1650,79.1200],
-
-        [21.1750,79.1400]
-
+        [21.1550,79.1050],
+        [21.1650,79.1200]
     ],
 
     {
-
-        weight:4
-
+        weight:5
     }
 
-)
-.bindPopup(
-
-    "<b>🛣️ Road Layer</b>" +
-
-    "<br>Nagpur Road Network"
-
-)
-.addTo(roadsLayer);
+).bindPopup(
+    "<b>Road</b><br>Nagpur Sample Road"
+).addTo(roadsLayer);
 
 
-/* =====================================================
-   RAILWAY LAYER
-===================================================== */
+/* Railway */
 
-var railwayLayer =
-L.layerGroup();
-
+var railwayLayer = L.layerGroup();
 
 L.polyline(
 
     [
-
-        [21.1150,79.0000],
-
-        [21.1300,79.0350],
-
-        [21.1458,79.0882],
-
-        [21.1600,79.1250],
-
-        [21.1800,79.1700]
-
+        [21.1150,79.0500],
+        [21.1350,79.0750],
+        [21.1550,79.1000]
     ],
 
     {
-
-        weight:5,
-
+        color:"#555",
+        weight:4,
         dashArray:"10,8"
-
     }
 
-)
-.bindPopup(
-
-    "<b>🚆 Railway Layer</b>" +
-
-    "<br>Nagpur Railway Network"
-
-)
-.addTo(railwayLayer);
+).bindPopup(
+    "<b>Railway</b><br>Nagpur Railway Sample"
+).addTo(railwayLayer);
 
 
-/* =====================================================
-   WATER BODIES
-===================================================== */
+/* Water */
 
-var waterLayer =
-L.layerGroup();
-
+var waterLayer = L.layerGroup();
 
 L.circle(
 
-    [21.1300,79.0700],
+    [21.1200,79.1000],
 
     {
-
-        radius:1300,
-
-        fillOpacity:0.25
-
+        radius:2200,
+        color:"#0077cc",
+        fillColor:"#4da6ff",
+        fillOpacity:0.35
     }
 
-)
-.bindPopup(
-
-    "<b>💧 Water Body</b>" +
-
-    "<br>Sample Water Feature"
-
-)
-.addTo(waterLayer);
+).bindPopup(
+    "<b>Water Body</b><br>Sample GIS Layer"
+).addTo(waterLayer);
 
 
-/* =====================================================
-   LAND USE / LAND COVER
-===================================================== */
+/* Land Use */
 
-var landuseLayer =
-L.layerGroup();
-
+var landuseLayer = L.layerGroup();
 
 L.polygon(
 
     [
-
-        [21.1200,79.0500],
-
-        [21.1200,79.0750],
-
-        [21.1400,79.0750],
-
-        [21.1400,79.0500]
-
+        [21.1700,79.0500],
+        [21.1900,79.0750],
+        [21.1750,79.1050],
+        [21.1500,79.0850]
     ],
 
     {
-
-        fillOpacity:0.20,
-
-        weight:2
-
+        color:"#3a8f3a",
+        fillColor:"#7bc96f",
+        fillOpacity:0.30
     }
 
-)
-.bindPopup(
-
-    "<b>🌳 Land Use / Land Cover</b>" +
-
-    "<br>Sample Vegetation / Open Land"
-
-)
-.addTo(landuseLayer);
+).bindPopup(
+    "<b>Land Use / Land Cover</b><br>Sample Polygon"
+).addTo(landuseLayer);
 
 
-/* =====================================================
-   ADMINISTRATIVE BOUNDARY
-===================================================== */
+/* Administrative Boundary */
 
-var boundaryLayer =
-L.layerGroup();
-
+var boundaryLayer = L.layerGroup();
 
 L.polygon(
 
     [
-
         [21.0800,79.0200],
-
-        [21.0800,79.1700],
-
-        [21.2100,79.1700],
-
-        [21.2100,79.0200]
-
+        [21.2100,79.0200],
+        [21.2100,79.1500],
+        [21.0800,79.1500]
     ],
 
     {
-
-        fillOpacity:0.03,
-
-        weight:3
-
+        color:"#9b2c2c",
+        weight:3,
+        fill:false,
+        dashArray:"8,6"
     }
 
-)
-.bindPopup(
-
-    "<b>🏛️ Administrative Boundary</b>" +
-
-    "<br>Sample Nagpur Study Boundary"
-
-)
-.addTo(boundaryLayer);
+).bindPopup(
+    "<b>Administrative Boundary</b><br>Sample Boundary"
+).addTo(boundaryLayer);
 
 
-/* =====================================================
+/* =========================
    LAYER TOGGLE
-===================================================== */
+========================= */
 
 function toggleLayer(layerName){
 
@@ -1262,337 +840,242 @@ function toggleLayer(layerName){
     var message;
 
 
-    /* ROADS */
+    if(layerName === "roads"){
 
-    if(
-        layerName === "roads"
-    ){
+        layer = roadsLayer;
 
-        layer =
-        roadsLayer;
-
-        checkbox =
-        document.getElementById(
+        checkbox = document.getElementById(
             "roadsLayer"
         );
 
-        message =
-        "Roads layer";
+        message = "Roads layer";
 
     }
 
 
-    /* RAILWAY */
+    if(layerName === "railway"){
 
-    if(
-        layerName === "railway"
-    ){
+        layer = railwayLayer;
 
-        layer =
-        railwayLayer;
-
-        checkbox =
-        document.getElementById(
+        checkbox = document.getElementById(
             "railwayLayer"
         );
 
-        message =
-        "Railway layer";
+        message = "Railway layer";
 
     }
 
 
-    /* WATER */
+    if(layerName === "water"){
 
-    if(
-        layerName === "water"
-    ){
+        layer = waterLayer;
 
-        layer =
-        waterLayer;
-
-        checkbox =
-        document.getElementById(
+        checkbox = document.getElementById(
             "waterLayer"
         );
 
-        message =
-        "Water Bodies layer";
+        message = "Water Bodies layer";
 
     }
 
 
-    /* LAND USE */
+    if(layerName === "landuse"){
 
-    if(
-        layerName === "landuse"
-    ){
+        layer = landuseLayer;
 
-        layer =
-        landuseLayer;
-
-        checkbox =
-        document.getElementById(
+        checkbox = document.getElementById(
             "landuseLayer"
         );
 
-        message =
-        "Land Use / Land Cover layer";
+        message = "Land Use / Land Cover layer";
 
     }
 
 
-    /* BOUNDARY */
+    if(layerName === "boundary"){
 
-    if(
-        layerName === "boundary"
-    ){
+        layer = boundaryLayer;
 
-        layer =
-        boundaryLayer;
-
-        checkbox =
-        document.getElementById(
+        checkbox = document.getElementById(
             "boundaryLayer"
         );
 
-        message =
-        "Administrative Boundary layer";
+        message = "Administrative Boundary layer";
 
     }
 
 
-    /* TURN ON */
-
-    if(
-        checkbox.checked
-    ){
+    if(checkbox.checked){
 
         layer.addTo(map);
 
         document.getElementById(
             "status"
-        ).innerHTML =
-        message + " ON";
+        ).innerHTML = message + " ON";
 
     }
-
-
-    /* TURN OFF */
-
     else{
 
         map.removeLayer(layer);
 
         document.getElementById(
             "status"
-        ).innerHTML =
-        message + " OFF";
+        ).innerHTML = message + " OFF";
 
     }
 
 }
 
 
-/* =====================================================
+/* =========================
    NAGPUR BUTTON
-===================================================== */
+========================= */
 
-function zoomNagpur(){
+function goNagpur(){
 
     map.setView(
-
         nagpur,
-
         11
-
     );
-
 
     nagpurMarker.openPopup();
 
-
     document.getElementById(
         "status"
     ).innerHTML =
-    "Viewing: Nagpur, Maharashtra";
+        "Nagpur location";
 
 }
 
 
-/* =====================================================
+/* =========================
    INDIA BUTTON
-===================================================== */
+========================= */
 
-function zoomIndia(){
+function goIndia(){
 
     map.setView(
-
-        [
-
-            22.9734,
-
-            78.6569
-
-        ],
-
+        [22.5937,78.9629],
         5
-
     );
-
 
     document.getElementById(
         "status"
     ).innerHTML =
-    "Viewing: India";
+        "India view";
 
 }
 
 
-/* =====================================================
+/* =========================
    MY LOCATION
-===================================================== */
+========================= */
 
 function locateUser(){
 
+    if(!navigator.geolocation){
+
+        document.getElementById(
+            "status"
+        ).innerHTML =
+            "Geolocation not supported";
+
+        return;
+
+    }
+
+
     document.getElementById(
         "status"
     ).innerHTML =
-    "Requesting your location...";
+        "Finding your location...";
 
 
-    map.locate({
+    navigator.geolocation.getCurrentPosition(
 
-        setView:true,
+        function(position){
 
-        maxZoom:15,
+            var lat =
+                position.coords.latitude;
 
-        enableHighAccuracy:true
+            var lon =
+                position.coords.longitude;
 
-    });
+
+            map.setView(
+                [lat,lon],
+                14
+            );
+
+
+            L.marker(
+                [lat,lon]
+            )
+            .addTo(map)
+            .bindPopup(
+
+                "<b>📌 Your Location</b>" +
+
+                "<br><br>" +
+
+                "Latitude: " +
+                lat.toFixed(6) +
+
+                "<br>" +
+
+                "Longitude: " +
+                lon.toFixed(6)
+
+            )
+            .openPopup();
+
+
+            document.getElementById(
+                "status"
+            ).innerHTML =
+                "Your location found";
+
+        },
+
+        function(){
+
+            document.getElementById(
+                "status"
+            ).innerHTML =
+                "Unable to find location";
+
+        }
+
+    );
 
 }
 
 
-/* =====================================================
-   LOCATION FOUND
-===================================================== */
-
-map.on(
-
-    "locationfound",
-
-    function(e){
-
-        L.marker(
-
-            e.latlng
-
-        )
-        .addTo(map)
-        .bindPopup(
-
-            "<b>📌 Your Location</b>" +
-
-            "<br><br>" +
-
-            "Latitude: " +
-
-            e.latlng.lat.toFixed(6) +
-
-            "<br>" +
-
-            "Longitude: " +
-
-            e.latlng.lng.toFixed(6)
-
-        )
-        .openPopup();
-
-
-        L.circle(
-
-            e.latlng,
-
-            {
-
-                radius:e.accuracy,
-
-                color:"#136AEC",
-
-                fillOpacity:0.08
-
-            }
-
-        ).addTo(map);
-
-
-        document.getElementById(
-            "status"
-        ).innerHTML =
-        "Location found";
-
-    }
-
-);
-
-
-/* =====================================================
-   LOCATION ERROR
-===================================================== */
-
-map.on(
-
-    "locationerror",
-
-    function(){
-
-        document.getElementById(
-            "status"
-        ).innerHTML =
-        "Location permission denied";
-
-
-        alert(
-            "Please allow location permission in your browser."
-        );
-
-    }
-
-);
-
-
-/* =====================================================
+/* =========================
    NAGPUR INFO
-===================================================== */
+========================= */
 
 function showNagpurInfo(){
 
     map.setView(
-
         nagpur,
-
         11
-
     );
-
 
     document.getElementById(
         "status"
     ).innerHTML =
-    "Nagpur GIS Information";
+        "Nagpur GIS Information";
 
 }
 
 
-/* =====================================================
-   MAP CLICK
-===================================================== */
+/* =========================
+   MAP CLICK COORDINATES
+========================= */
 
 map.on(
-
     "click",
-
     function(e){
 
         L.popup()
@@ -1622,13 +1105,20 @@ map.on(
         .openOn(map);
 
     }
-
 );
+
+
+/* =========================
+   INITIAL STATUS
+========================= */
+
+document.getElementById(
+    "status"
+).innerHTML =
+    "Ready — Nagpur GeoPortal";
 
 </script>
 
-
 </body>
-
 </html>
 ```
