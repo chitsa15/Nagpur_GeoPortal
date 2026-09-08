@@ -1,241 +1,518 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Nagpur GeoPortal | Sachin Chaudhari GIS</title>
+<title>Nagpur GeoPortal | Sachin Chaudhari GIS</title>
 
-    <!-- Leaflet CSS -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+<!-- Leaflet -->
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<!-- Leaflet Geocoder -->
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-        }
+<!-- Leaflet Measure -->
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet-measure/dist/leaflet-measure.css"/>
 
-        header {
-            background: #123b5d;
-            color: white;
-            padding: 16px 22px;
-        }
+<style>
 
-        header h1 {
-            margin: 0;
-            font-size: 25px;
-        }
+*{
+    box-sizing:border-box;
+}
 
-        header p {
-            margin: 5px 0 0;
-            font-size: 14px;
-        }
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f7fa;
+}
 
-        .toolbar {
-            background: white;
-            padding: 10px 15px;
-            border-bottom: 1px solid #ddd;
-        }
+/* HEADER */
 
-        .toolbar button {
-            padding: 9px 15px;
-            margin-right: 7px;
-            border: 1px solid #ccc;
-            background: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+header{
+    background:linear-gradient(135deg,#123b5d,#0b6e8e);
+    color:white;
+    padding:16px 22px;
+}
 
-        .toolbar button:hover {
-            background: #eef3f7;
-        }
+header h1{
+    margin:0;
+    font-size:26px;
+}
 
-        #map {
-            height: calc(100vh - 125px);
-            width: 100%;
-        }
+header p{
+    margin:5px 0 0;
+    font-size:14px;
+}
 
-        .info-box {
-            position: absolute;
-            z-index: 1000;
-            top: 145px;
-            left: 15px;
-            background: white;
-            padding: 12px 15px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            max-width: 260px;
-        }
+/* TOOLBAR */
 
-        .info-box h3 {
-            margin: 0 0 7px;
-            color: #123b5d;
-        }
+.toolbar{
+    background:white;
+    padding:10px 15px;
+    border-bottom:1px solid #ddd;
+    box-shadow:0 1px 4px rgba(0,0,0,.12);
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
 
-        .info-box p {
-            margin: 4px 0;
-            font-size: 13px;
-        }
+.toolbar button{
+    padding:9px 14px;
+    border:1px solid #cbd5dc;
+    background:white;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
 
-        footer {
-            position: fixed;
-            bottom: 0;
-            right: 10px;
-            z-index: 1000;
-            background: rgba(255,255,255,0.9);
-            padding: 4px 8px;
-            font-size: 11px;
-        }
-    </style>
+.toolbar button:hover{
+    background:#eaf3f8;
+}
+
+/* MAP */
+
+#map{
+    height:calc(100vh - 125px);
+    width:100%;
+}
+
+/* INFO */
+
+.info-box{
+    position:absolute;
+    z-index:1000;
+    top:145px;
+    left:15px;
+    background:rgba(255,255,255,.95);
+    padding:14px 16px;
+    border-radius:8px;
+    box-shadow:0 3px 12px rgba(0,0,0,.25);
+    max-width:285px;
+}
+
+.info-box h3{
+    margin:0 0 8px;
+    color:#123b5d;
+}
+
+.info-box p{
+    margin:5px 0;
+    font-size:13px;
+}
+
+/* STATUS */
+
+.status{
+    position:absolute;
+    z-index:1000;
+    bottom:25px;
+    left:15px;
+    background:white;
+    padding:8px 12px;
+    border-radius:6px;
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+    font-size:12px;
+}
+
+/* FOOTER */
+
+footer{
+    position:fixed;
+    bottom:0;
+    right:10px;
+    z-index:1000;
+    background:rgba(255,255,255,.9);
+    padding:4px 9px;
+    font-size:11px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    header h1{
+        font-size:21px;
+    }
+
+    header p{
+        font-size:12px;
+    }
+
+    .toolbar button{
+        padding:8px 10px;
+        font-size:12px;
+    }
+
+    .info-box{
+        top:205px;
+        left:10px;
+        max-width:230px;
+        font-size:12px;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
 <header>
-    <h1>🗺️ Nagpur GeoPortal</h1>
-    <p>GIS Mapping & Spatial Analysis | Sachin Chaudhari GIS</p>
+
+<h1>🗺️ Nagpur GeoPortal</h1>
+
+<p>
+GIS Mapping & Spatial Analysis |
+Sachin Chaudhari GIS
+</p>
+
 </header>
 
 <div class="toolbar">
-    <button onclick="zoomNagpur()">📍 Nagpur</button>
-    <button onclick="zoomIndia()">🇮🇳 India</button>
-    <button onclick="locateUser()">📌 My Location</button>
+
+<button onclick="zoomNagpur()">📍 Nagpur</button>
+
+<button onclick="zoomIndia()">🇮🇳 India</button>
+
+<button onclick="locateUser()">📌 My Location</button>
+
+<button onclick="showNagpurInfo()">ℹ️ Nagpur Info</button>
+
 </div>
 
 <div class="info-box">
-    <h3>Nagpur GeoPortal</h3>
-    <p><b>Location:</b> Nagpur, Maharashtra</p>
-    <p><b>Platform:</b> Web GIS</p>
-    <p><b>Developer:</b> Sachin Chaudhari GIS</p>
-    <p>Use the layer button on the map to change the base map.</p>
+
+<h3>🗺️ Nagpur GeoPortal</h3>
+
+<p>
+<b>Location:</b> Nagpur, Maharashtra
+</p>
+
+<p>
+<b>Platform:</b> Web GIS
+</p>
+
+<p>
+<b>Developer:</b> Sachin Chaudhari GIS
+</p>
+
+<p>
+<b>Applications:</b> GIS • Remote Sensing • Spatial Analysis
+</p>
+
+<p>
+Use the map controls to change layers, search locations and perform measurements.
+</p>
+
 </div>
 
 <div id="map"></div>
 
+<div class="status" id="status">
+Ready — Nagpur GeoPortal
+</div>
+
 <footer>
-    © Sachin Chaudhari GIS
+© 2026 Sachin Chaudhari GIS
 </footer>
 
 <!-- Leaflet JS -->
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Geocoder -->
+
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<!-- Measure -->
+
+<script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
 
 <script>
 
-    // -----------------------------
-    // MAP INITIALIZATION
-    // -----------------------------
+/* =====================================
+   NAGPUR
+===================================== */
 
-    var nagpur = [21.1458, 79.0882];
+var nagpur = [21.1458,79.0882];
 
-    var map = L.map('map').setView(nagpur, 11);
 
-    // -----------------------------
-    // BASE MAPS
-    // -----------------------------
+/* =====================================
+   MAP
+===================================== */
 
-    var osm = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }
-    );
+var map = L.map('map').setView(nagpur,11);
 
-    var satellite = L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        {
-            maxZoom: 19,
-            attribution: 'Tiles &copy; Esri'
-        }
-    );
 
-    var streets = L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-        {
-            maxZoom: 19,
-            attribution: 'Tiles &copy; Esri'
-        }
-    );
+/* =====================================
+   BASE MAPS
+===================================== */
 
-    // Default map
-    osm.addTo(map);
+var osm = L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+    maxZoom:19,
+    attribution:'© OpenStreetMap contributors'
+});
 
-    // -----------------------------
-    // LAYER CONTROL
-    // -----------------------------
 
-    var baseMaps = {
-        "OpenStreetMap": osm,
-        "Satellite": satellite,
-        "Esri Streets": streets
-    };
+var satellite = L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+{
+    maxZoom:19,
+    attribution:'Tiles © Esri'
+});
 
-    L.control.layers(baseMaps).addTo(map);
 
-    // -----------------------------
-    // NAGPUR MARKER
-    // -----------------------------
+var streets = L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+{
+    maxZoom:19,
+    attribution:'Tiles © Esri'
+});
 
-    var nagpurMarker = L.marker(nagpur)
-        .addTo(map)
-        .bindPopup(
-            "<b>Nagpur</b><br>Maharashtra, India<br><br>GIS GeoPortal"
-        );
 
-    // -----------------------------
-    // NAGPUR CIRCLE
-    // -----------------------------
+/* DEFAULT */
 
-    L.circle(nagpur, {
-        radius: 15000,
-        weight: 2,
-        fillOpacity: 0.05
+osm.addTo(map);
+
+
+/* =====================================
+   BASE MAP CONTROL
+===================================== */
+
+var baseMaps = {
+
+    "OpenStreetMap":osm,
+
+    "Satellite Imagery":satellite,
+
+    "Esri Streets":streets
+
+};
+
+L.control.layers(baseMaps,null,{
+    collapsed:false
+}).addTo(map);
+
+
+/* =====================================
+   NAGPUR MARKER
+===================================== */
+
+var nagpurMarker = L.marker(nagpur)
+.addTo(map)
+.bindPopup(
+
+"<b>🗺️ Nagpur</b><br>"+
+"Nagpur District<br>"+
+"Maharashtra, India<br><br>"+
+"<b>Sachin Chaudhari GIS GeoPortal</b>"
+
+);
+
+
+/* =====================================
+   NAGPUR STUDY AREA
+===================================== */
+
+var nagpurCircle = L.circle(nagpur,{
+
+    radius:15000,
+
+    weight:2,
+
+    fillOpacity:.05
+
+}).addTo(map);
+
+
+/* =====================================
+   SEARCH
+===================================== */
+
+L.Control.geocoder({
+
+    defaultMarkGeocode:true,
+
+    placeholder:"Search location..."
+
+}).addTo(map);
+
+
+/* =====================================
+   MEASUREMENT
+===================================== */
+
+var measureControl = new L.Control.Measure({
+
+    primaryLengthUnit:'kilometers',
+
+    secondaryLengthUnit:'meters',
+
+    primaryAreaUnit:'hectares',
+
+    secondaryAreaUnit:'sqmeters',
+
+    activeColor:'#136AEC',
+
+    completedColor:'#2A93EE'
+
+});
+
+measureControl.addTo(map);
+
+
+/* =====================================
+   NAGPUR BUTTON
+===================================== */
+
+function zoomNagpur(){
+
+    map.setView(nagpur,11);
+
+    nagpurMarker.openPopup();
+
+    document.getElementById("status").innerHTML =
+    "Viewing: Nagpur, Maharashtra";
+
+}
+
+
+/* =====================================
+   INDIA BUTTON
+===================================== */
+
+function zoomIndia(){
+
+    map.setView([22.9734,78.6569],5);
+
+    document.getElementById("status").innerHTML =
+    "Viewing: India";
+
+}
+
+
+/* =====================================
+   MY LOCATION
+===================================== */
+
+function locateUser(){
+
+    document.getElementById("status").innerHTML =
+    "Requesting your location...";
+
+    map.locate({
+
+        setView:true,
+
+        maxZoom:15,
+
+        enableHighAccuracy:true
+
+    });
+
+}
+
+
+/* =====================================
+   LOCATION FOUND
+===================================== */
+
+map.on('locationfound',function(e){
+
+    L.marker(e.latlng)
+
+    .addTo(map)
+
+    .bindPopup(
+
+        "<b>📌 Your Location</b><br>"+
+        "Latitude: "+e.latlng.lat.toFixed(6)+"<br>"+
+        "Longitude: "+e.latlng.lng.toFixed(6)
+
+    )
+
+    .openPopup();
+
+
+    L.circle(e.latlng,{
+
+        radius:e.accuracy,
+
+        color:"#136AEC",
+
+        fillOpacity:.08
+
     }).addTo(map);
 
-    // -----------------------------
-    // FUNCTIONS
-    // -----------------------------
 
-    function zoomNagpur() {
-        map.setView(nagpur, 11);
-        nagpurMarker.openPopup();
-    }
+    document.getElementById("status").innerHTML =
+    "Location found";
 
-    function zoomIndia() {
-        map.setView([22.9734, 78.6569], 5);
-    }
 
-    function locateUser() {
-        map.locate({
-            setView: true,
-            maxZoom: 15
-        });
-    }
+});
 
-    map.on('locationfound', function(e) {
 
-        L.marker(e.latlng)
-            .addTo(map)
-            .bindPopup("Your location")
-            .openPopup();
+/* =====================================
+   LOCATION ERROR
+===================================== */
 
-    });
+map.on('locationerror',function(){
 
-    map.on('locationerror', function() {
+    document.getElementById("status").innerHTML =
+    "Location permission denied";
 
-        alert("Location permission was not allowed.");
+    alert(
+    "Please allow location permission in your browser."
+    );
 
-    });
+});
+
+
+/* =====================================
+   NAGPUR INFORMATION
+===================================== */
+
+function showNagpurInfo(){
+
+    nagpurMarker.openPopup();
+
+    document.getElementById("status").innerHTML =
+    "Nagpur GIS Information";
+
+}
+
+
+/* =====================================
+   MAP CLICK COORDINATES
+===================================== */
+
+map.on('click',function(e){
+
+    L.popup()
+
+    .setLatLng(e.latlng)
+
+    .setContent(
+
+        "<b>📍 Map Location</b><br>"+
+        "Latitude: "+e.latlng.lat.toFixed(6)+"<br>"+
+        "Longitude: "+e.latlng.lng.toFixed(6)
+
+    )
+
+    .openOn(map);
+
+});
 
 </script>
 
 </body>
 </html>
+```
