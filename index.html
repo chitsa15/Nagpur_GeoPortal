@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nagpur GeoPortal | Sachin Chaudhari GIS</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        header {
+            background: #123b5d;
+            color: white;
+            padding: 16px 22px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .toolbar button {
+            padding: 9px 15px;
+            margin-right: 7px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .toolbar button:hover {
+            background: #eef3f7;
+        }
+
+        #map {
+            height: calc(100vh - 125px);
+            width: 100%;
+        }
+
+        .info-box {
+            position: absolute;
+            z-index: 1000;
+            top: 145px;
+            left: 15px;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            max-width: 260px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 7px;
+            color: #123b5d;
+        }
+
+        .info-box p {
+            margin: 4px 0;
+            font-size: 13px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.9);
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🗺️ Nagpur GeoPortal</h1>
+    <p>GIS Mapping & Spatial Analysis | Sachin Chaudhari GIS</p>
+</header>
+
+<div class="toolbar">
+    <button onclick="zoomNagpur()">📍 Nagpur</button>
+    <button onclick="zoomIndia()">🇮🇳 India</button>
+    <button onclick="locateUser()">📌 My Location</button>
+</div>
+
+<div class="info-box">
+    <h3>Nagpur GeoPortal</h3>
+    <p><b>Location:</b> Nagpur, Maharashtra</p>
+    <p><b>Platform:</b> Web GIS</p>
+    <p><b>Developer:</b> Sachin Chaudhari GIS</p>
+    <p>Use the layer button on the map to change the base map.</p>
+</div>
+
+<div id="map"></div>
+
+<footer>
+    © Sachin Chaudhari GIS
+</footer>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+    // -----------------------------
+    // MAP INITIALIZATION
+    // -----------------------------
+
+    var nagpur = [21.1458, 79.0882];
+
+    var map = L.map('map').setView(nagpur, 11);
+
+    // -----------------------------
+    // BASE MAPS
+    // -----------------------------
+
+    var osm = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }
+    );
+
+    var satellite = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri'
+        }
+    );
+
+    var streets = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+        {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri'
+        }
+    );
+
+    // Default map
+    osm.addTo(map);
+
+    // -----------------------------
+    // LAYER CONTROL
+    // -----------------------------
+
+    var baseMaps = {
+        "OpenStreetMap": osm,
+        "Satellite": satellite,
+        "Esri Streets": streets
+    };
+
+    L.control.layers(baseMaps).addTo(map);
+
+    // -----------------------------
+    // NAGPUR MARKER
+    // -----------------------------
+
+    var nagpurMarker = L.marker(nagpur)
+        .addTo(map)
+        .bindPopup(
+            "<b>Nagpur</b><br>Maharashtra, India<br><br>GIS GeoPortal"
+        );
+
+    // -----------------------------
+    // NAGPUR CIRCLE
+    // -----------------------------
+
+    L.circle(nagpur, {
+        radius: 15000,
+        weight: 2,
+        fillOpacity: 0.05
+    }).addTo(map);
+
+    // -----------------------------
+    // FUNCTIONS
+    // -----------------------------
+
+    function zoomNagpur() {
+        map.setView(nagpur, 11);
+        nagpurMarker.openPopup();
+    }
+
+    function zoomIndia() {
+        map.setView([22.9734, 78.6569], 5);
+    }
+
+    function locateUser() {
+        map.locate({
+            setView: true,
+            maxZoom: 15
+        });
+    }
+
+    map.on('locationfound', function(e) {
+
+        L.marker(e.latlng)
+            .addTo(map)
+            .bindPopup("Your location")
+            .openPopup();
+
+    });
+
+    map.on('locationerror', function() {
+
+        alert("Location permission was not allowed.");
+
+    });
+
+</script>
+
+</body>
+</html>
