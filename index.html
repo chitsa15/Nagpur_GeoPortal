@@ -1,12 +1,12 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Nagpur GeoPortal | Sachin Chaudhari GIS</title>
+<title>Nagpur GeoPortal | Property & GIS</title>
 
 <link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -90,6 +90,7 @@ html,body{
     box-shadow:0 2px 7px rgba(0,0,0,0.20);
     position:relative;
     z-index:2000;
+    overflow-x:auto;
 }
 
 .toolbar button{
@@ -100,10 +101,66 @@ html,body{
     border-radius:5px;
     cursor:pointer;
     font-size:13px;
+    white-space:nowrap;
 }
 
 .toolbar button:hover{
     background:#084d7c;
+}
+
+
+/* =========================
+   PROPERTY SEARCH BAR
+========================= */
+
+.property-bar{
+    position:absolute;
+    top:205px;
+    left:50%;
+    transform:translateX(-50%);
+    width:650px;
+    max-width:calc(100% - 30px);
+
+    background:white;
+    padding:10px;
+
+    border-radius:9px;
+
+    box-shadow:
+    0 3px 15px rgba(0,0,0,0.25);
+
+    z-index:1700;
+}
+
+.property-title{
+    font-weight:bold;
+    color:#075c96;
+    font-size:14px;
+    margin-bottom:7px;
+}
+
+.property-controls{
+    display:flex;
+    gap:6px;
+}
+
+.property-controls select,
+.property-controls input{
+    flex:1;
+    min-width:0;
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:12px;
+}
+
+.property-controls button{
+    background:#0b65a3;
+    color:white;
+    border:none;
+    border-radius:5px;
+    padding:8px 12px;
+    cursor:pointer;
 }
 
 
@@ -122,19 +179,13 @@ html,body{
 
 
 /* =========================
-   GIS LAYERS PANEL
-   LEFT + LOWER
+   GIS PANEL
 ========================= */
 
 .gis-panel{
     position:absolute;
-
-    /* MORE DOWN */
     top:320px !important;
-
-    /* LEFT */
     left:10px !important;
-
     right:auto !important;
 
     width:245px;
@@ -196,6 +247,236 @@ html,body{
 
 
 /* =========================
+   PROPERTY PANEL
+========================= */
+
+.property-panel{
+    position:absolute;
+
+    top:320px;
+    right:10px;
+
+    width:290px;
+    max-height:calc(100vh - 380px);
+
+    background:white;
+
+    border-radius:9px;
+
+    box-shadow:
+    0 3px 15px rgba(0,0,0,0.30);
+
+    overflow:hidden;
+
+    z-index:1600;
+}
+
+.property-panel-header{
+    background:#16803c;
+    color:white;
+    padding:11px 14px;
+    font-weight:bold;
+    font-size:15px;
+}
+
+.property-list{
+    max-height:calc(100vh - 425px);
+    overflow-y:auto;
+}
+
+.property-card{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    cursor:pointer;
+}
+
+.property-card:hover{
+    background:#f4faf6;
+}
+
+.property-card-title{
+    font-weight:bold;
+    color:#075c96;
+    font-size:14px;
+}
+
+.property-price{
+    color:#16803c;
+    font-weight:bold;
+    margin-top:4px;
+}
+
+.property-meta{
+    font-size:11px;
+    color:#555;
+    margin-top:4px;
+}
+
+.property-buttons{
+    margin-top:7px;
+    display:flex;
+    gap:5px;
+}
+
+.property-buttons button{
+    border:none;
+    border-radius:4px;
+    padding:5px 8px;
+    font-size:11px;
+    cursor:pointer;
+}
+
+.call-btn{
+    background:#0b65a3;
+    color:white;
+}
+
+.whatsapp-btn{
+    background:#16803c;
+    color:white;
+}
+
+
+/* =========================
+   POST PROPERTY BUTTON
+========================= */
+
+.post-property{
+    position:absolute;
+
+    bottom:50px;
+    right:15px;
+
+    z-index:1700;
+
+    background:#f08a00;
+    color:white;
+
+    border:none;
+    border-radius:25px;
+
+    padding:12px 18px;
+
+    font-weight:bold;
+    cursor:pointer;
+
+    box-shadow:
+    0 3px 10px rgba(0,0,0,0.30);
+}
+
+.post-property:hover{
+    background:#d97900;
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+
+    background:rgba(0,0,0,0.55);
+
+    z-index:5000;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:15px;
+}
+
+.modal-content{
+    width:500px;
+    max-width:100%;
+
+    max-height:90vh;
+
+    overflow-y:auto;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    box-shadow:
+    0 5px 25px rgba(0,0,0,0.35);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:15px;
+}
+
+.modal-header h2{
+    margin:0;
+    color:#075c96;
+    font-size:20px;
+}
+
+.close{
+    font-size:25px;
+    cursor:pointer;
+    color:#777;
+}
+
+.form-group{
+    margin-bottom:11px;
+}
+
+.form-group label{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    padding:8px;
+
+    border:1px solid #ccc;
+    border-radius:5px;
+
+    font-size:13px;
+}
+
+.form-group textarea{
+    min-height:70px;
+    resize:vertical;
+}
+
+.submit-property{
+    width:100%;
+
+    padding:10px;
+
+    border:none;
+    border-radius:6px;
+
+    background:#16803c;
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+
+/* =========================
    STATUS
 ========================= */
 
@@ -203,11 +484,17 @@ html,body{
     position:absolute;
     left:10px;
     bottom:42px;
+
     background:rgba(0,0,0,0.72);
+
     color:white;
+
     padding:7px 12px;
+
     border-radius:5px;
+
     font-size:12px;
+
     z-index:1600;
 }
 
@@ -218,16 +505,24 @@ html,body{
 
 .footer{
     position:absolute;
+
     bottom:0;
     left:0;
     right:0;
+
     height:32px;
+
     background:#063b73;
+
     color:white;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
+
     font-size:12px;
+
     z-index:2000;
 }
 
@@ -265,11 +560,9 @@ html,body{
         height:48px;
         gap:4px;
         padding:5px;
-        overflow-x:auto;
     }
 
     .toolbar button{
-        white-space:nowrap;
         padding:7px 9px;
         font-size:11px;
     }
@@ -278,14 +571,43 @@ html,body{
         top:198px;
     }
 
+    .property-bar{
+        top:205px;
+        width:calc(100% - 20px);
+    }
 
-    /* GIS PANEL MORE DOWN */
+    .property-controls{
+        flex-wrap:wrap;
+    }
+
+    .property-controls select,
+    .property-controls input{
+        min-width:45%;
+    }
 
     .gis-panel{
-        top:320px !important;
+        top:350px !important;
         left:8px !important;
-        right:auto !important;
-        width:215px;
+        width:205px;
+    }
+
+    .property-panel{
+        top:auto;
+        bottom:48px;
+        right:8px;
+        width:210px;
+        max-height:260px;
+    }
+
+    .property-list{
+        max-height:210px;
+    }
+
+    .post-property{
+        bottom:55px;
+        right:8px;
+        padding:9px 13px;
+        font-size:11px;
     }
 
     #status{
@@ -298,7 +620,7 @@ html,body{
 
 
 /* =========================
-   VERY SMALL SCREEN
+   VERY SMALL
 ========================= */
 
 @media(max-width:400px){
@@ -338,14 +660,10 @@ html,body{
         top:203px;
     }
 
-
-    /* GIS PANEL MORE DOWN */
-
     .gis-panel{
-        top:320px !important;
+        top:350px !important;
         left:6px !important;
-        right:auto !important;
-        width:200px;
+        width:190px;
     }
 
     .gis-panel-header{
@@ -356,6 +674,10 @@ html,body{
     .layer-item{
         font-size:11px;
         padding:8px 9px;
+    }
+
+    .property-panel{
+        width:190px;
     }
 
 }
@@ -396,7 +718,7 @@ html,body{
         &nbsp;&nbsp;|&nbsp;&nbsp;
 
         <b>Applications:</b>
-        GIS • Remote Sensing • Spatial Analysis
+        GIS • Remote Sensing • Property Search
 
     </div>
 
@@ -424,6 +746,99 @@ html,body{
     <button onclick="showNagpurInfo()">
         ℹ️ Nagpur Info
     </button>
+
+    <button onclick="showAllProperties()">
+        🏠 Properties
+    </button>
+
+    <button onclick="filterProperties('sale')">
+        🏡 Plots
+    </button>
+
+    <button onclick="filterProperties('rent')">
+        🏠 Rental
+    </button>
+
+    <button onclick="filterProperties('pg')">
+        🛏️ PG
+    </button>
+
+</div>
+
+
+<!-- =========================
+     PROPERTY SEARCH
+========================= -->
+
+<div class="property-bar">
+
+    <div class="property-title">
+        🔎 Property Search
+    </div>
+
+    <div class="property-controls">
+
+        <select id="propertyType">
+
+            <option value="all">
+                All Properties
+            </option>
+
+            <option value="sale">
+                🏡 Plot for Sale
+            </option>
+
+            <option value="rent">
+                🏠 Rental House
+            </option>
+
+            <option value="pg">
+                🛏️ PG
+            </option>
+
+        </select>
+
+
+        <select id="propertyArea">
+
+            <option value="all">
+                All Areas
+            </option>
+
+            <option value="Manish Nagar">
+                Manish Nagar
+            </option>
+
+            <option value="Wardha Road">
+                Wardha Road
+            </option>
+
+            <option value="Hingna">
+                Hingna
+            </option>
+
+            <option value="Katol Road">
+                Katol Road
+            </option>
+
+            <option value="Sadar">
+                Sadar
+            </option>
+
+        </select>
+
+
+        <input
+        type="text"
+        id="propertyKeyword"
+        placeholder="Search locality...">
+
+
+        <button onclick="searchProperties()">
+            Search
+        </button>
+
+    </div>
 
 </div>
 
@@ -543,6 +958,198 @@ html,body{
 
 
 <!-- =========================
+     PROPERTY PANEL
+========================= -->
+
+<div class="property-panel">
+
+    <div class="property-panel-header">
+
+        🏠 Property Listings
+
+        <span id="propertyCount">
+            (0)
+        </span>
+
+    </div>
+
+    <div
+    class="property-list"
+    id="propertyList">
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     POST PROPERTY
+========================= -->
+
+<button
+class="post-property"
+onclick="openPropertyForm()">
+
+    ➕ Post Property
+
+</button>
+
+
+<!-- =========================
+     PROPERTY MODAL
+========================= -->
+
+<div
+class="modal"
+id="propertyModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                ➕ Post Your Property
+            </h2>
+
+            <span
+            class="close"
+            onclick="closePropertyForm()">
+                ×
+            </span>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Property Type
+            </label>
+
+            <select id="postType">
+
+                <option value="sale">
+                    Plot for Sale
+                </option>
+
+                <option value="rent">
+                    Rental House
+                </option>
+
+                <option value="pg">
+                    PG
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Property Title
+            </label>
+
+            <input
+            id="postTitle"
+            placeholder="Example: 1200 sq.ft Residential Plot">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Area / Locality
+            </label>
+
+            <input
+            id="postArea"
+            placeholder="Example: Manish Nagar">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Price / Monthly Rent
+            </label>
+
+            <input
+            id="postPrice"
+            placeholder="Example: ₹45 Lakh / ₹15,000 per month">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Area Size
+            </label>
+
+            <input
+            id="postSize"
+            placeholder="Example: 1200 sq.ft">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Owner / Agent Name
+            </label>
+
+            <input
+            id="postOwner"
+            placeholder="Name">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Mobile Number
+            </label>
+
+            <input
+            id="postMobile"
+            placeholder="Mobile number">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Property Description
+            </label>
+
+            <textarea
+            id="postDescription"
+            placeholder="Road, location, facilities, etc."></textarea>
+
+        </div>
+
+
+        <button
+        class="submit-property"
+        onclick="submitProperty()">
+
+            Submit Property
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
      STATUS
 ========================= -->
 
@@ -556,12 +1163,16 @@ html,body{
 ========================= -->
 
 <div class="footer">
+
     © 2026 Sachin Chaudhari GIS
+    &nbsp;|&nbsp;
+    GIS • Property • Real Estate
+
 </div>
 
 
 <!-- =========================
-     LEAFLET JS
+     LEAFLET
 ========================= -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -671,7 +1282,7 @@ var nagpurMarker = L.marker(nagpur)
 
 
 /* =========================
-   15 KM STUDY AREA
+   STUDY AREA
 ========================= */
 
 var nagpurCircle = L.circle(
@@ -722,12 +1333,10 @@ measureControl.addTo(map);
 
 
 /* =========================
-   ROADS
+   GIS LAYERS
 ========================= */
 
-var roadsLayer =
-L.layerGroup();
-
+var roadsLayer = L.layerGroup();
 
 L.polyline(
 
@@ -750,13 +1359,7 @@ L.polyline(
 .addTo(roadsLayer);
 
 
-/* =========================
-   RAILWAY
-========================= */
-
-var railwayLayer =
-L.layerGroup();
-
+var railwayLayer = L.layerGroup();
 
 L.polyline(
 
@@ -781,13 +1384,7 @@ L.polyline(
 .addTo(railwayLayer);
 
 
-/* =========================
-   WATER
-========================= */
-
-var waterLayer =
-L.layerGroup();
-
+var waterLayer = L.layerGroup();
 
 L.circle(
 
@@ -809,13 +1406,7 @@ L.circle(
 .addTo(waterLayer);
 
 
-/* =========================
-   LAND USE
-========================= */
-
-var landuseLayer =
-L.layerGroup();
-
+var landuseLayer = L.layerGroup();
 
 L.polygon(
 
@@ -841,13 +1432,7 @@ L.polygon(
 .addTo(landuseLayer);
 
 
-/* =========================
-   ADMINISTRATIVE BOUNDARY
-========================= */
-
-var boundaryLayer =
-L.layerGroup();
-
+var boundaryLayer = L.layerGroup();
 
 L.polygon(
 
@@ -875,7 +1460,799 @@ L.polygon(
 
 
 /* =========================
-   LAYER TOGGLE
+   PROPERTY DATA
+========================= */
+
+var properties = [
+
+    {
+        id:1,
+        type:"sale",
+        title:"1200 sq.ft Residential Plot",
+        area:"Manish Nagar",
+        price:"₹45 Lakh",
+        size:"1200 sq.ft",
+        owner:"Sample Property Agent",
+        mobile:"919999999999",
+        lat:21.1185,
+        lng:79.0785,
+        description:"Residential plot with road access."
+    },
+
+    {
+        id:2,
+        type:"sale",
+        title:"1500 sq.ft Residential Plot",
+        area:"Wardha Road",
+        price:"₹52 Lakh",
+        size:"1500 sq.ft",
+        owner:"Nagpur Property Services",
+        mobile:"919888888888",
+        lat:21.1050,
+        lng:79.0850,
+        description:"Residential plot near main road."
+    },
+
+    {
+        id:3,
+        type:"sale",
+        title:"2000 sq.ft Commercial Plot",
+        area:"Hingna",
+        price:"₹70 Lakh",
+        size:"2000 sq.ft",
+        owner:"Sample Agent",
+        mobile:"919777777777",
+        lat:21.1055,
+        lng:78.9820,
+        description:"Commercial property suitable for investment."
+    },
+
+    {
+        id:4,
+        type:"rent",
+        title:"2 BHK Rental House",
+        area:"Sadar",
+        price:"₹18,000 / Month",
+        size:"2 BHK",
+        owner:"Sample Rental Agent",
+        mobile:"919666666666",
+        lat:21.1660,
+        lng:79.0780,
+        description:"2 BHK house available for family."
+    },
+
+    {
+        id:5,
+        type:"rent",
+        title:"1 BHK Rental Flat",
+        area:"Manish Nagar",
+        price:"₹12,000 / Month",
+        size:"1 BHK",
+        owner:"Nagpur Rentals",
+        mobile:"919555555555",
+        lat:21.1170,
+        lng:79.0750,
+        description:"Semi-furnished 1 BHK flat."
+    },
+
+    {
+        id:6,
+        type:"pg",
+        title:"Boys PG",
+        area:"Wardha Road",
+        price:"₹7,500 / Month",
+        size:"Single / Sharing",
+        owner:"Sample PG Owner",
+        mobile:"919444444444",
+        lat:21.1260,
+        lng:79.0920,
+        description:"PG with Wi-Fi and food facility."
+    },
+
+    {
+        id:7,
+        type:"pg",
+        title:"Girls PG",
+        area:"Sadar",
+        price:"₹8,000 / Month",
+        size:"Single / Double",
+        owner:"Sample PG Services",
+        mobile:"919333333333",
+        lat:21.1580,
+        lng:79.0810,
+        description:"Safe PG accommodation with basic facilities."
+    }
+
+];
+
+
+/* =========================
+   PROPERTY LAYER
+========================= */
+
+var propertyLayer =
+L.layerGroup().addTo(map);
+
+
+/* =========================
+   PROPERTY ICONS
+========================= */
+
+function getPropertyIcon(type){
+
+    var iconColor = "#16803c";
+
+    var symbol = "🏡";
+
+    if(type === "rent"){
+
+        iconColor = "#0b65a3";
+
+        symbol = "🏠";
+
+    }
+
+    if(type === "pg"){
+
+        iconColor = "#8a4fa3";
+
+        symbol = "🛏️";
+
+    }
+
+    return L.divIcon({
+
+        className:"property-marker",
+
+        html:
+        "<div style='" +
+
+        "background:"+iconColor+";" +
+
+        "color:white;" +
+
+        "width:34px;" +
+
+        "height:34px;" +
+
+        "border-radius:50%;" +
+
+        "display:flex;" +
+
+        "align-items:center;" +
+
+        "justify-content:center;" +
+
+        "font-size:17px;" +
+
+        "border:3px solid white;" +
+
+        "box-shadow:0 2px 7px rgba(0,0,0,.4);" +
+
+        "'>" +
+
+        symbol +
+
+        "</div>",
+
+        iconSize:[34,34],
+
+        iconAnchor:[17,17]
+
+    });
+
+}
+
+
+/* =========================
+   PROPERTY POPUP
+========================= */
+
+function propertyPopup(p){
+
+    var whatsapp =
+    "https://wa.me/" +
+    p.mobile +
+    "?text=" +
+    encodeURIComponent(
+        "Hello, I found your property on Nagpur GeoPortal: " +
+        p.title
+    );
+
+
+    var typeText =
+    p.type === "sale"
+    ? "Plot for Sale"
+    : p.type === "rent"
+    ? "Rental House"
+    : "PG";
+
+
+    return `
+
+        <div style="min-width:230px">
+
+            <h3 style="
+            margin:0 0 6px;
+            color:#075c96">
+
+                ${p.title}
+
+            </h3>
+
+            <b>Type:</b>
+            ${typeText}
+
+            <br>
+
+            <b>📍 Area:</b>
+            ${p.area}
+
+            <br>
+
+            <b>📐 Size:</b>
+            ${p.size}
+
+            <br>
+
+            <b>💰 Price:</b>
+            <span style="
+            color:#16803c;
+            font-weight:bold">
+
+                ${p.price}
+
+            </span>
+
+            <br>
+
+            <b>👤 Contact:</b>
+            ${p.owner}
+
+            <br><br>
+
+            ${p.description}
+
+            <br><br>
+
+            <a href="tel:+${p.mobile}"
+            style="
+            background:#0b65a3;
+            color:white;
+            padding:7px 10px;
+            text-decoration:none;
+            border-radius:4px;
+            display:inline-block">
+
+                📞 Call
+
+            </a>
+
+            &nbsp;
+
+            <a href="${whatsapp}"
+            target="_blank"
+            style="
+            background:#16803c;
+            color:white;
+            padding:7px 10px;
+            text-decoration:none;
+            border-radius:4px;
+            display:inline-block">
+
+                💬 WhatsApp
+
+            </a>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================
+   DISPLAY PROPERTY
+========================= */
+
+function displayProperties(list){
+
+    propertyLayer.clearLayers();
+
+    var listHTML = "";
+
+    list.forEach(function(p){
+
+        var marker =
+        L.marker(
+            [p.lat,p.lng],
+            {
+                icon:getPropertyIcon(p.type)
+            }
+        )
+        .bindPopup(
+            propertyPopup(p)
+        );
+
+        marker.addTo(propertyLayer);
+
+
+        marker.on(
+            "click",
+            function(){
+
+                map.setView(
+                    [p.lat,p.lng],
+                    15
+                );
+
+            }
+        );
+
+
+        var typeText =
+        p.type === "sale"
+        ? "🏡 Plot"
+        : p.type === "rent"
+        ? "🏠 Rental"
+        : "🛏️ PG";
+
+
+        listHTML += `
+
+            <div
+            class="property-card"
+            onclick="zoomToProperty(${p.id})">
+
+                <div class="property-card-title">
+
+                    ${typeText}
+                    —
+                    ${p.title}
+
+                </div>
+
+                <div class="property-price">
+
+                    💰 ${p.price}
+
+                </div>
+
+                <div class="property-meta">
+
+                    📍 ${p.area}
+
+                    <br>
+
+                    📐 ${p.size}
+
+                    <br>
+
+                    👤 ${p.owner}
+
+                </div>
+
+                <div class="property-buttons">
+
+                    <button
+                    class="call-btn"
+                    onclick="event.stopPropagation(); callProperty('${p.mobile}')">
+
+                        📞 Call
+
+                    </button>
+
+                    <button
+                    class="whatsapp-btn"
+                    onclick="event.stopPropagation(); whatsappProperty('${p.mobile}','${p.title}')">
+
+                        💬 WhatsApp
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    document.getElementById(
+        "propertyList"
+    ).innerHTML = listHTML;
+
+
+    document.getElementById(
+        "propertyCount"
+    ).innerHTML =
+    "(" + list.length + ")";
+
+
+    document.getElementById(
+        "status"
+    ).innerHTML =
+    list.length +
+    " properties found";
+
+}
+
+
+/* =========================
+   SHOW ALL
+========================= */
+
+function showAllProperties(){
+
+    displayProperties(
+        properties
+    );
+
+}
+
+
+/* =========================
+   FILTER
+========================= */
+
+function filterProperties(type){
+
+    var result =
+    properties.filter(
+        function(p){
+
+            return p.type === type;
+
+        }
+    );
+
+    displayProperties(result);
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function searchProperties(){
+
+    var type =
+    document.getElementById(
+        "propertyType"
+    ).value;
+
+
+    var area =
+    document.getElementById(
+        "propertyArea"
+    ).value;
+
+
+    var keyword =
+    document.getElementById(
+        "propertyKeyword"
+    ).value
+    .toLowerCase()
+    .trim();
+
+
+    var result =
+    properties.filter(
+        function(p){
+
+            var typeMatch =
+            type === "all" ||
+            p.type === type;
+
+
+            var areaMatch =
+            area === "all" ||
+            p.area === area;
+
+
+            var keywordMatch =
+            keyword === "" ||
+            p.title.toLowerCase().includes(keyword) ||
+            p.area.toLowerCase().includes(keyword) ||
+            p.description.toLowerCase().includes(keyword);
+
+
+            return
+            typeMatch &&
+            areaMatch &&
+            keywordMatch;
+
+        }
+    );
+
+
+    displayProperties(result);
+
+}
+
+
+/* =========================
+   ZOOM PROPERTY
+========================= */
+
+function zoomToProperty(id){
+
+    var p =
+    properties.find(
+        function(item){
+
+            return item.id === id;
+
+        }
+    );
+
+
+    if(!p) return;
+
+
+    map.setView(
+        [p.lat,p.lng],
+        16
+    );
+
+
+    propertyLayer.eachLayer(
+        function(layer){
+
+            var position =
+            layer.getLatLng();
+
+
+            if(
+                position.lat === p.lat &&
+                position.lng === p.lng
+            ){
+
+                layer.openPopup();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================
+   CALL
+========================= */
+
+function callProperty(number){
+
+    window.location.href =
+    "tel:+" + number;
+
+}
+
+
+/* =========================
+   WHATSAPP
+========================= */
+
+function whatsappProperty(
+    number,
+    title
+){
+
+    var url =
+    "https://wa.me/" +
+    number +
+    "?text=" +
+    encodeURIComponent(
+        "Hello, I am interested in " +
+        title +
+        " listed on Nagpur GeoPortal."
+    );
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+/* =========================
+   POST PROPERTY MODAL
+========================= */
+
+function openPropertyForm(){
+
+    document.getElementById(
+        "propertyModal"
+    ).style.display =
+    "flex";
+
+}
+
+
+function closePropertyForm(){
+
+    document.getElementById(
+        "propertyModal"
+    ).style.display =
+    "none";
+
+}
+
+
+/* =========================
+   SUBMIT PROPERTY
+========================= */
+
+function submitProperty(){
+
+    var type =
+    document.getElementById(
+        "postType"
+    ).value;
+
+
+    var title =
+    document.getElementById(
+        "postTitle"
+    ).value.trim();
+
+
+    var area =
+    document.getElementById(
+        "postArea"
+    ).value.trim();
+
+
+    var price =
+    document.getElementById(
+        "postPrice"
+    ).value.trim();
+
+
+    var size =
+    document.getElementById(
+        "postSize"
+    ).value.trim();
+
+
+    var owner =
+    document.getElementById(
+        "postOwner"
+    ).value.trim();
+
+
+    var mobile =
+    document.getElementById(
+        "postMobile"
+    ).value.trim();
+
+
+    var description =
+    document.getElementById(
+        "postDescription"
+    ).value.trim();
+
+
+    if(
+        !title ||
+        !area ||
+        !price ||
+        !size ||
+        !owner ||
+        !mobile
+    ){
+
+        alert(
+            "Please fill all required details."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       DEMO COORDINATE
+
+       In next version user will
+       select property location
+       directly on map.
+    */
+
+    var newProperty = {
+
+        id:
+        properties.length + 1,
+
+        type:type,
+
+        title:title,
+
+        area:area,
+
+        price:price,
+
+        size:size,
+
+        owner:owner,
+
+        mobile:mobile,
+
+        lat:
+        nagpur[0] +
+        (Math.random()-0.5)*0.08,
+
+        lng:
+        nagpur[1] +
+        (Math.random()-0.5)*0.08,
+
+        description:
+        description ||
+        "Property listed through Nagpur GeoPortal."
+
+    };
+
+
+    properties.push(
+        newProperty
+    );
+
+
+    closePropertyForm();
+
+
+    displayProperties(
+        properties
+    );
+
+
+    alert(
+        "Property added successfully in demo mode."
+    );
+
+
+    /*
+       Clear form
+    */
+
+    document.getElementById(
+        "postTitle"
+    ).value = "";
+
+    document.getElementById(
+        "postArea"
+    ).value = "";
+
+    document.getElementById(
+        "postPrice"
+    ).value = "";
+
+    document.getElementById(
+        "postSize"
+    ).value = "";
+
+    document.getElementById(
+        "postOwner"
+    ).value = "";
+
+    document.getElementById(
+        "postMobile"
+    ).value = "";
+
+    document.getElementById(
+        "postDescription"
+    ).value = "";
+
+}
+
+
+/* =========================
+   GIS LAYER TOGGLE
 ========================= */
 
 function toggleLayer(layerName){
@@ -890,7 +2267,9 @@ function toggleLayer(layerName){
         layer = roadsLayer;
 
         checkbox =
-        document.getElementById("roadsLayer");
+        document.getElementById(
+            "roadsLayer"
+        );
 
         message = "Roads layer";
 
@@ -902,7 +2281,9 @@ function toggleLayer(layerName){
         layer = railwayLayer;
 
         checkbox =
-        document.getElementById("railwayLayer");
+        document.getElementById(
+            "railwayLayer"
+        );
 
         message = "Railway layer";
 
@@ -914,7 +2295,9 @@ function toggleLayer(layerName){
         layer = waterLayer;
 
         checkbox =
-        document.getElementById("waterLayer");
+        document.getElementById(
+            "waterLayer"
+        );
 
         message = "Water Bodies layer";
 
@@ -926,7 +2309,9 @@ function toggleLayer(layerName){
         layer = landuseLayer;
 
         checkbox =
-        document.getElementById("landuseLayer");
+        document.getElementById(
+            "landuseLayer"
+        );
 
         message =
         "Land Use / Land Cover layer";
@@ -939,7 +2324,9 @@ function toggleLayer(layerName){
         layer = boundaryLayer;
 
         checkbox =
-        document.getElementById("boundaryLayer");
+        document.getElementById(
+            "boundaryLayer"
+        );
 
         message =
         "Administrative Boundary layer";
@@ -951,8 +2338,9 @@ function toggleLayer(layerName){
 
         layer.addTo(map);
 
-        document.getElementById("status")
-        .innerHTML =
+        document.getElementById(
+            "status"
+        ).innerHTML =
         message + " ON";
 
     }
@@ -961,8 +2349,9 @@ function toggleLayer(layerName){
 
         map.removeLayer(layer);
 
-        document.getElementById("status")
-        .innerHTML =
+        document.getElementById(
+            "status"
+        ).innerHTML =
         message + " OFF";
 
     }
@@ -971,7 +2360,7 @@ function toggleLayer(layerName){
 
 
 /* =========================
-   NAGPUR BUTTON
+   NAGPUR
 ========================= */
 
 function goNagpur(){
@@ -983,15 +2372,16 @@ function goNagpur(){
 
     nagpurMarker.openPopup();
 
-    document.getElementById("status")
-    .innerHTML =
+    document.getElementById(
+        "status"
+    ).innerHTML =
     "Nagpur location";
 
 }
 
 
 /* =========================
-   INDIA BUTTON
+   INDIA
 ========================= */
 
 function goIndia(){
@@ -1001,8 +2391,9 @@ function goIndia(){
         5
     );
 
-    document.getElementById("status")
-    .innerHTML =
+    document.getElementById(
+        "status"
+    ).innerHTML =
     "India view";
 
 }
@@ -1014,18 +2405,23 @@ function goIndia(){
 
 function locateUser(){
 
-    if(!navigator.geolocation){
+    if(
+        !navigator.geolocation
+    ){
 
-        document.getElementById("status")
-        .innerHTML =
+        document.getElementById(
+            "status"
+        ).innerHTML =
         "Geolocation not supported";
 
         return;
+
     }
 
 
-    document.getElementById("status")
-    .innerHTML =
+    document.getElementById(
+        "status"
+    ).innerHTML =
     "Finding your location...";
 
 
@@ -1046,7 +2442,9 @@ function locateUser(){
             );
 
 
-            L.marker([lat,lon])
+            L.marker(
+                [lat,lon]
+            )
 
             .addTo(map)
 
@@ -1069,8 +2467,9 @@ function locateUser(){
             .openPopup();
 
 
-            document.getElementById("status")
-            .innerHTML =
+            document.getElementById(
+                "status"
+            ).innerHTML =
             "Your location found";
 
         },
@@ -1078,8 +2477,9 @@ function locateUser(){
 
         function(){
 
-            document.getElementById("status")
-            .innerHTML =
+            document.getElementById(
+                "status"
+            ).innerHTML =
             "Unable to find location";
 
         }
@@ -1100,8 +2500,9 @@ function showNagpurInfo(){
         11
     );
 
-    document.getElementById("status")
-    .innerHTML =
+    document.getElementById(
+        "status"
+    ).innerHTML =
     "Nagpur GIS Information";
 
 }
@@ -1117,7 +2518,9 @@ map.on(
 
         L.popup()
 
-        .setLatLng(e.latlng)
+        .setLatLng(
+            e.latlng
+        )
 
         .setContent(
 
@@ -1142,15 +2545,24 @@ map.on(
 
 
 /* =========================
+   INITIAL PROPERTY LOAD
+========================= */
+
+displayProperties(
+    properties
+);
+
+
+/* =========================
    STATUS
 ========================= */
 
-document.getElementById("status")
-.innerHTML =
+document.getElementById(
+    "status"
+).innerHTML =
 "Ready — Nagpur GeoPortal";
 
 </script>
 
 </body>
 </html>
-```
