@@ -3,46 +3,2734 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
 <title>Nagpur GeoPortal | Sachin Chaudhari GIS</title>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-measure/dist/leaflet-measure.css">
+
 <style>
-:root{--navy:#102a43;--blue:#1769aa;--cyan:#08a6c9;--green:#16803c;--orange:#e07a00;--red:#d32f2f;--purple:#7b1fa2;--bg:#eef3f8;--muted:#64748b;--shadow:0 7px 22px rgba(16,42,67,.1)}
-*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#243447}header{height:64px;background:linear-gradient(135deg,#0c2746,#1769aa 70%,#08a6c9);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;box-shadow:0 3px 14px #0004;position:relative;z-index:2000}.brand{display:flex;align-items:center;gap:10px}.brand-icon{font-size:27px}h1{font-size:20px;margin:0}.brand small{font-size:9px;opacity:.85}.header-right{font-size:12px;font-weight:bold}.main{display:flex;height:calc(100vh - 64px);min-height:0}.sidebar{width:370px;background:var(--bg);padding:12px;overflow:auto;box-shadow:3px 0 14px #0002;z-index:1000}.section{background:#fff;border:1px solid #e1e8ef;border-radius:14px;padding:13px;margin-bottom:11px;box-shadow:var(--shadow)}.section h3{margin:0 0 10px;color:var(--navy);font-size:15px}.head{display:flex;justify-content:space-between;align-items:center}.badge{font-size:9px;background:#e9f4ff;color:var(--blue);padding:4px 7px;border-radius:20px;font-weight:bold}label{display:block;margin:8px 0 4px;font-size:12px;font-weight:bold;color:#40566c}select,input,textarea{width:100%;padding:10px;border:1px solid #ccd7e2;border-radius:8px;font-size:13px;background:#fff;color:#23384d}textarea{min-height:72px;resize:vertical}button{width:100%;padding:10px;border:0;border-radius:8px;background:var(--navy);color:#fff;cursor:pointer;font-size:13px;font-weight:bold;margin-top:8px}.btn-blue{background:var(--blue)}.btn-green{background:var(--green)}.btn-orange{background:var(--orange)}.btn-red{background:var(--red)}.subcat-title{background:#eef7ff;border-left:4px solid var(--blue);padding:8px;border-radius:6px;font-size:12px;font-weight:bold}.subcat-list{font-size:11px;line-height:1.65;color:#607386;margin-top:6px}.hint{font-size:11px;color:var(--muted);line-height:1.5;margin:7px 0 0}.result-box{margin-top:9px;max-height:280px;overflow:auto}.empty{padding:10px;border-radius:8px;background:#f7f9fb;color:#64748b;font-size:12px}.result-card{background:#fbfdff;border:1px solid #dce6ef;border-radius:10px;padding:9px;margin:7px 0;cursor:pointer}.result-card:hover{background:#f4faff;border-color:#5aa7d8}.result-card h4{margin:0 0 5px;color:var(--navy);font-size:13px}.result-card p{margin:3px 0;font-size:11px}.layer-row{display:flex;gap:7px;align-items:center;padding:4px 0;font-size:12px}.layer-row input{width:auto}.modal{display:none;position:fixed;inset:0;z-index:5000;background:#071626aa;padding:12px;overflow:auto}.modal-content{max-width:650px;margin:2vh auto;background:#fff;padding:18px;border-radius:16px;box-shadow:0 20px 60px #0005;position:relative}.close{position:absolute;right:15px;top:7px;font-size:27px;cursor:pointer;color:#607386}.modal-title{margin:0 35px 4px;color:var(--navy);font-size:20px}.modal-sub{font-size:11px;color:var(--muted);margin-bottom:8px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.full{grid-column:1/-1}.location-box{background:#eef8ff;border:1px dashed #55a7d2;border-radius:10px;padding:10px;margin-top:9px}.location-status{font-size:11px;color:#35627d;margin-top:6px;font-weight:bold}#map{flex:1;min-width:0;height:100%}.popup-card{min-width:225px}.popup-card h3{margin:0 0 6px;color:var(--navy);font-size:15px}.popup-price{font-size:15px;font-weight:bold;color:var(--green);margin:5px 0}.popup-actions{display:flex;gap:6px;margin-top:8px}.popup-actions a{flex:1;text-align:center;padding:7px;border-radius:6px;color:#fff;text-decoration:none;font-size:11px;font-weight:bold}.legend{background:#fff;padding:9px;border-radius:8px;box-shadow:0 1px 8px #0004;font-size:11px}.legend-item{display:flex;gap:6px;align-items:center;margin:3px}.legend-color{width:12px;height:12px;border-radius:50%}
-@media(max-width:800px){header{height:58px;padding:0 10px}.brand-icon{font-size:22px}h1{font-size:16px}.brand small,.header-right{display:none}.main{height:calc(100vh - 58px);display:flex;flex-direction:column}.sidebar{width:100%;height:44%;padding:7px;order:1}.section{padding:10px;margin-bottom:7px;border-radius:11px}.section h3{font-size:14px}.subcat-list{display:none}#map{height:56%;min-height:330px;order:2}.result-box{max-height:170px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.modal{padding:7px}.modal-content{margin:1vh auto;padding:14px}.leaflet-control-geocoder{max-width:210px}}
-</style></head>
+
+:root{
+--navy:#102a43;
+--blue:#1769aa;
+--cyan:#08a6c9;
+--green:#16803c;
+--orange:#e07a00;
+--red:#d32f2f;
+--purple:#7b1fa2;
+--bg:#eef3f8;
+--muted:#64748b;
+--shadow:0 7px 22px rgba(16,42,67,.1)
+}
+
+*{box-sizing:border-box}
+
+html,body{
+margin:0;
+height:100%;
+font-family:Arial,Helvetica,sans-serif;
+background:var(--bg);
+color:#243447
+}
+
+header{
+height:64px;
+background:linear-gradient(135deg,#0c2746,#1769aa 70%,#08a6c9);
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 18px;
+box-shadow:0 3px 14px #0004;
+position:relative;
+z-index:2000
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px
+}
+
+.brand-icon{
+font-size:27px
+}
+
+h1{
+font-size:20px;
+margin:0
+}
+
+.brand small{
+font-size:9px;
+opacity:.85
+}
+
+.header-right{
+font-size:12px;
+font-weight:bold
+}
+
+.main{
+display:flex;
+height:calc(100vh - 64px);
+min-height:0
+}
+
+.sidebar{
+width:370px;
+background:var(--bg);
+padding:12px;
+overflow:auto;
+box-shadow:3px 0 14px #0002;
+z-index:1000
+}
+
+.section{
+background:#fff;
+border:1px solid #e1e8ef;
+border-radius:14px;
+padding:13px;
+margin-bottom:11px;
+box-shadow:var(--shadow)
+}
+
+.section h3{
+margin:0 0 10px;
+color:var(--navy);
+font-size:15px
+}
+
+.head{
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+
+.badge{
+font-size:9px;
+background:#e9f4ff;
+color:var(--blue);
+padding:4px 7px;
+border-radius:20px;
+font-weight:bold
+}
+
+label{
+display:block;
+margin:8px 0 4px;
+font-size:12px;
+font-weight:bold;
+color:#40566c
+}
+
+select,input,textarea{
+width:100%;
+padding:10px;
+border:1px solid #ccd7e2;
+border-radius:8px;
+font-size:13px;
+background:#fff;
+color:#23384d
+}
+
+textarea{
+min-height:72px;
+resize:vertical
+}
+
+button{
+width:100%;
+padding:10px;
+border:0;
+border-radius:8px;
+background:var(--navy);
+color:#fff;
+cursor:pointer;
+font-size:13px;
+font-weight:bold;
+margin-top:8px
+}
+
+button:hover{
+opacity:.9
+}
+
+.btn-blue{
+background:var(--blue)
+}
+
+.btn-green{
+background:var(--green)
+}
+
+.btn-orange{
+background:var(--orange)
+}
+
+.btn-red{
+background:var(--red)
+}
+
+.btn-gray{
+background:#64748b
+}
+
+.subcat-title{
+background:#eef7ff;
+border-left:4px solid var(--blue);
+padding:8px;
+border-radius:6px;
+font-size:12px;
+font-weight:bold
+}
+
+.subcat-list{
+font-size:11px;
+line-height:1.65;
+color:#607386;
+margin-top:6px
+}
+
+.hint{
+font-size:11px;
+color:var(--muted);
+line-height:1.5;
+margin:7px 0 0
+}
+
+.result-box{
+margin-top:9px;
+max-height:280px;
+overflow:auto
+}
+
+.empty{
+padding:10px;
+border-radius:8px;
+background:#f7f9fb;
+color:#64748b;
+font-size:12px
+}
+
+.result-card{
+background:#fbfdff;
+border:1px solid #dce6ef;
+border-radius:10px;
+padding:9px;
+margin:7px 0;
+cursor:pointer
+}
+
+.result-card:hover{
+background:#f4faff;
+border-color:#5aa7d8
+}
+
+.result-card h4{
+margin:0 0 5px;
+color:var(--navy);
+font-size:13px
+}
+
+.result-card p{
+margin:3px 0;
+font-size:11px
+}
+
+.result-buttons{
+display:flex;
+gap:6px;
+margin-top:8px
+}
+
+.result-buttons button{
+flex:1;
+margin:0;
+padding:7px;
+font-size:11px
+}
+
+.layer-row{
+display:flex;
+gap:7px;
+align-items:center;
+padding:4px 0;
+font-size:12px
+}
+
+.layer-row input{
+width:auto
+}
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+z-index:5000;
+background:#071626aa;
+padding:12px;
+overflow:auto
+}
+
+.modal-content{
+max-width:650px;
+margin:2vh auto;
+background:#fff;
+padding:18px;
+border-radius:16px;
+box-shadow:0 20px 60px #0005;
+position:relative
+}
+
+.close{
+position:absolute;
+right:15px;
+top:7px;
+font-size:27px;
+cursor:pointer;
+color:#607386
+}
+
+.modal-title{
+margin:0 35px 4px;
+color:var(--navy);
+font-size:20px
+}
+
+.modal-sub{
+font-size:11px;
+color:var(--muted);
+margin-bottom:8px
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:0 10px
+}
+
+.full{
+grid-column:1/-1
+}
+
+.location-box{
+background:#eef8ff;
+border:1px dashed #55a7d2;
+border-radius:10px;
+padding:10px;
+margin-top:9px
+}
+
+.location-status{
+font-size:11px;
+color:#35627d;
+margin-top:6px;
+font-weight:bold
+}
+
+.edit-info{
+background:#fff8e1;
+border:1px solid #f0c36d;
+color:#7a5700;
+padding:8px;
+border-radius:8px;
+font-size:11px;
+margin:8px 0
+}
+
+#map{
+flex:1;
+min-width:0;
+height:100%
+}
+
+.popup-card{
+min-width:225px
+}
+
+.popup-card h3{
+margin:0 0 6px;
+color:var(--navy);
+font-size:15px
+}
+
+.popup-price{
+font-size:15px;
+font-weight:bold;
+color:var(--green);
+margin:5px 0
+}
+
+.popup-actions{
+display:flex;
+gap:6px;
+margin-top:8px
+}
+
+.popup-actions a{
+flex:1;
+text-align:center;
+padding:7px;
+border-radius:6px;
+color:#fff;
+text-decoration:none;
+font-size:11px;
+font-weight:bold
+}
+
+.popup-button{
+flex:1;
+border:0;
+padding:7px;
+border-radius:6px;
+color:#fff;
+font-size:11px;
+font-weight:bold;
+cursor:pointer;
+margin:0
+}
+
+.legend{
+background:#fff;
+padding:9px;
+border-radius:8px;
+box-shadow:0 1px 8px #0004;
+font-size:11px
+}
+
+.legend-item{
+display:flex;
+gap:6px;
+align-items:center;
+margin:3px
+}
+
+.legend-color{
+width:12px;
+height:12px;
+border-radius:50%
+}
+
+.status-badge{
+display:inline-block;
+padding:3px 6px;
+border-radius:10px;
+font-size:9px;
+font-weight:bold;
+background:#fff3cd;
+color:#856404;
+margin-top:4px
+}
+
+@media(max-width:800px){
+
+header{
+height:58px;
+padding:0 10px
+}
+
+.brand-icon{
+font-size:22px
+}
+
+h1{
+font-size:16px
+}
+
+.brand small,
+.header-right{
+display:none
+}
+
+.main{
+height:calc(100vh - 58px);
+display:flex;
+flex-direction:column
+}
+
+.sidebar{
+width:100%;
+height:44%;
+padding:7px;
+order:1
+}
+
+.section{
+padding:10px;
+margin-bottom:7px;
+border-radius:11px
+}
+
+.section h3{
+font-size:14px
+}
+
+.subcat-list{
+display:none
+}
+
+#map{
+height:56%;
+min-height:330px;
+order:2
+}
+
+.result-box{
+max-height:170px
+}
+
+.form-grid{
+grid-template-columns:1fr
+}
+
+.full{
+grid-column:auto
+}
+
+.modal{
+padding:7px
+}
+
+.modal-content{
+margin:1vh auto;
+padding:14px
+}
+
+.leaflet-control-geocoder{
+max-width:210px
+}
+
+.popup-card{
+min-width:200px
+}
+
+}
+
+</style>
+</head>
+
 <body>
-<header><div class="brand"><div class="brand-icon">🗺️</div><div><h1>Nagpur GeoPortal</h1><small>GIS • PROPERTY • PLANNING</small></div></div><div class="header-right">Sachin Chaudhari GIS</div></header>
-<div class="main"><aside class="sidebar">
-<div class="section"><div class="head"><h3>🏠 Property Search</h3><span class="badge">LISTINGS</span></div><div class="subcat-title">📂 Property Sub Categories</div><div class="subcat-list">Residential Plot • Commercial Plot • House • Flat / Apartment • Shop • Industrial Property • Agricultural Land • Rental House • Rental Flat • Boys PG • Girls PG</div>
-<label>Property Category</label><select id="propertyType"><option value="all">All Properties</option><option value="sale">💰 Sale / Purchase</option><option value="rent">🏠 Rent</option><option value="pg">🛏️ PG</option></select>
-<label>Property Sub Category</label><select id="propertySubCategory"><option value="all">All Sub Categories</option><option value="residential_plot">Residential Plot</option><option value="commercial_plot">Commercial Plot</option><option value="house">House</option><option value="flat">Flat / Apartment</option><option value="shop">Shop</option><option value="industrial">Industrial Property</option><option value="agricultural">Agricultural Land</option><option value="rental_house">Rental House</option><option value="rental_flat">Rental Flat</option><option value="boys_pg">Boys PG</option><option value="girls_pg">Girls PG</option></select>
-<label>Area</label><input id="propertyArea" list="areaList" placeholder="Enter / select area"><label>Keyword</label><input id="propertyKeyword" placeholder="plot, house, Manish Nagar"><button class="btn-blue" onclick="searchProperties()">🔎 Search Property</button><button class="btn-red" onclick="clearPropertySearch()">✖ Clear Search</button><div id="propertyResults" class="result-box"></div></div>
-<div class="section"><div class="head"><h3>🏘️ Layout Search</h3><span class="badge">GIS</span></div><label>Status</label><select id="layoutStatus"><option value="all">All Layouts</option><option value="approved">Approved / Existing</option><option value="proposed">Upcoming / Proposed</option></select><label>Layout Type</label><select id="layoutType"><option value="all">All Types</option><option>Residential</option><option>Commercial</option><option>Industrial</option></select><label>Area</label><select id="layoutArea"><option value="all">All Areas</option></select><label>Keyword</label><input id="layoutKeyword" placeholder="Layout / developer / area"><button class="btn-blue" onclick="searchLayouts()">🔎 Search Layout</button><div id="layoutResults" class="result-box"></div></div>
-<div class="section"><h3>💰 Property Costing</h3><label>Plot Area (Sq.ft)</label><input type="number" id="plotArea" placeholder="Example: 1200"><label>Rate (₹ / Sq.ft)</label><input type="number" id="plotRate" placeholder="Example: 2500"><button class="btn-green" onclick="calculateCost()">Calculate Cost</button><div id="costResult" class="hint"></div></div>
-<div class="section"><div class="head"><h3>🗺️ GIS Layers</h3><span class="badge">MAP</span></div><label class="layer-row"><input type="checkbox" checked onchange="toggleLayer('bufferLayer',this.checked)">45 KM Nagpur Reference Buffer</label><label class="layer-row"><input type="checkbox" checked onchange="toggleLayer('urbanLayer',this.checked)">Nagpur Urban Reference Area</label><label class="layer-row"><input type="checkbox" checked onchange="toggleLayer('propertyLayer',this.checked)">Published Properties</label><p class="hint">Road, railway, water, land-use and layout layers remain empty until verified GIS data is connected.</p></div>
-<div class="section"><h3>📢 Property Services</h3><button class="btn-orange" onclick="openPropertyModal()">➕ Post Your Property</button><p class="hint">New listings are saved in this browser in this prototype. Public database + admin approval can be connected next.</p></div>
-<div class="section"><h3>ℹ️ About GeoPortal</h3><p class="hint">GIS-based property and planning platform for Nagpur Urban Area and the surrounding 45 KM region.</p><p class="hint"><strong>No demo property records are included.</strong></p></div>
-</aside><div id="map"></div></div>
+
+<header>
+
+<div class="brand">
+
+<div class="brand-icon">🗺️</div>
+
+<div>
+<h1>Nagpur GeoPortal</h1>
+<small>GIS • PROPERTY • PLANNING</small>
+</div>
+
+</div>
+
+<div class="header-right">
+Sachin Chaudhari GIS
+</div>
+
+</header>
+
+<div class="main">
+
+<aside class="sidebar">
+
+<!-- PROPERTY SEARCH -->
+
+<div class="section">
+
+<div class="head">
+<h3>🏠 Property Search</h3>
+<span class="badge">LISTINGS</span>
+</div>
+
+<div class="subcat-title">
+📂 Property Sub Categories
+</div>
+
+<div class="subcat-list">
+Residential Plot • Commercial Plot • House • Flat / Apartment • Shop • Industrial Property • Agricultural Land • Rental House • Rental Flat • Boys PG • Girls PG
+</div>
+
+<label>Property Category</label>
+
+<select id="propertyType">
+
+<option value="all">All Properties</option>
+<option value="sale">💰 Sale / Purchase</option>
+<option value="rent">🏠 Rent</option>
+<option value="pg">🛏️ PG</option>
+
+</select>
+
+<label>Property Sub Category</label>
+
+<select id="propertySubCategory">
+
+<option value="all">All Sub Categories</option>
+<option value="residential_plot">Residential Plot</option>
+<option value="commercial_plot">Commercial Plot</option>
+<option value="house">House</option>
+<option value="flat">Flat / Apartment</option>
+<option value="shop">Shop</option>
+<option value="industrial">Industrial Property</option>
+<option value="agricultural">Agricultural Land</option>
+<option value="rental_house">Rental House</option>
+<option value="rental_flat">Rental Flat</option>
+<option value="boys_pg">Boys PG</option>
+<option value="girls_pg">Girls PG</option>
+
+</select>
+
+<label>Area</label>
+
+<input
+id="propertyArea"
+list="areaList"
+placeholder="Enter / select area">
+
+<label>Keyword</label>
+
+<input
+id="propertyKeyword"
+placeholder="plot, house, Manish Nagar">
+
+<button class="btn-blue" onclick="searchProperties()">
+🔎 Search Property
+</button>
+
+<button class="btn-red" onclick="clearPropertySearch()">
+✖ Clear Search
+</button>
+
+<div id="propertyResults" class="result-box"></div>
+
+</div>
+
+
+<!-- LAYOUT SEARCH -->
+
+<div class="section">
+
+<div class="head">
+<h3>🏘️ Layout Search</h3>
+<span class="badge">GIS</span>
+</div>
+
+<label>Status</label>
+
+<select id="layoutStatus">
+
+<option value="all">All Layouts</option>
+<option value="approved">Approved / Existing</option>
+<option value="proposed">Upcoming / Proposed</option>
+
+</select>
+
+<label>Layout Type</label>
+
+<select id="layoutType">
+
+<option value="all">All Types</option>
+<option>Residential</option>
+<option>Commercial</option>
+<option>Industrial</option>
+
+</select>
+
+<label>Area</label>
+
+<select id="layoutArea">
+
+<option value="all">All Areas</option>
+
+</select>
+
+<label>Keyword</label>
+
+<input
+id="layoutKeyword"
+placeholder="Layout / developer / area">
+
+<button class="btn-blue" onclick="searchLayouts()">
+🔎 Search Layout
+</button>
+
+<div id="layoutResults" class="result-box"></div>
+
+</div>
+
+
+<!-- COSTING -->
+
+<div class="section">
+
+<h3>💰 Property Costing</h3>
+
+<label>Plot Area (Sq.ft)</label>
+
+<input
+type="number"
+id="plotArea"
+placeholder="Example: 1200">
+
+<label>Rate (₹ / Sq.ft)</label>
+
+<input
+type="number"
+id="plotRate"
+placeholder="Example: 2500">
+
+<button class="btn-green" onclick="calculateCost()">
+Calculate Cost
+</button>
+
+<div id="costResult" class="hint"></div>
+
+</div>
+
+
+<!-- GIS LAYERS -->
+
+<div class="section">
+
+<div class="head">
+
+<h3>🗺️ GIS Layers</h3>
+
+<span class="badge">MAP</span>
+
+</div>
+
+<label class="layer-row">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('bufferLayer',this.checked)">
+
+45 KM Nagpur Reference Buffer
+
+</label>
+
+<label class="layer-row">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('urbanLayer',this.checked)">
+
+Nagpur Urban Reference Area
+
+</label>
+
+<label class="layer-row">
+
+<input
+type="checkbox"
+checked
+onchange="toggleLayer('propertyLayer',this.checked)">
+
+Published Properties
+
+</label>
+
+<p class="hint">
+
+Road, railway, water, land-use and layout layers remain empty until verified GIS data is connected.
+
+</p>
+
+</div>
+
+
+<!-- PROPERTY SERVICES -->
+
+<div class="section">
+
+<h3>📢 Property Services</h3>
+
+<button
+class="btn-orange"
+onclick="openPropertyModal()">
+
+➕ Post Your Property
+
+</button>
+
+<p class="hint">
+
+New listings are saved in this browser in this prototype. Public database + admin approval can be connected next.
+
+</p>
+
+</div>
+
+
+<!-- ABOUT -->
+
+<div class="section">
+
+<h3>ℹ️ About GeoPortal</h3>
+
+<p class="hint">
+
+GIS-based property and planning platform for Nagpur Urban Area and the surrounding 45 KM region.
+
+</p>
+
+<p class="hint">
+
+<strong>No demo property records are included.</strong>
+
+</p>
+
+</div>
+
+</aside>
+
+
+<div id="map"></div>
+
+</div>
+
+
 <datalist id="areaList"></datalist>
-<div id="propertyModal" class="modal"><div class="modal-content"><span class="close" onclick="closePropertyModal()">&times;</span><h2 class="modal-title">📢 Post Your Property</h2><div class="modal-sub">Add genuine property information and select its exact map location.</div><div class="form-grid">
-<div><label>Owner / Agent Name *</label><input id="postName" placeholder="Your name"></div><div><label>Mobile *</label><input id="postMobile" type="tel" inputmode="numeric" placeholder="10 digit mobile"></div>
-<div><label>Property Category *</label><select id="postType"><option value="sale">Sale / Purchase</option><option value="rent">Rent</option><option value="pg">PG</option></select></div><div><label>Sub Category *</label><select id="postSubCategory"><option value="residential_plot">Residential Plot</option><option value="commercial_plot">Commercial Plot</option><option value="house">House</option><option value="flat">Flat / Apartment</option><option value="shop">Shop</option><option value="industrial">Industrial Property</option><option value="agricultural">Agricultural Land</option><option value="rental_house">Rental House</option><option value="rental_flat">Rental Flat</option><option value="boys_pg">Boys PG</option><option value="girls_pg">Girls PG</option></select></div>
-<div><label>Area *</label><input id="postArea" list="areaList" placeholder="e.g. Manish Nagar"></div><div><label>Property Area</label><input id="postPropertyArea" placeholder="e.g. 1200 Sq.ft"></div><div><label>Price / Rent *</label><input id="postPrice" placeholder="e.g. ₹45 Lakh / ₹18,000 month"></div><div><label>Road Width</label><input id="postRoad" placeholder="e.g. 30 ft"></div><div class="full"><label>Property Title *</label><input id="postTitle" placeholder="e.g. 1200 Sq.ft Residential Plot"></div><div class="full"><label>Description</label><textarea id="postDescription" placeholder="Property details, landmark, amenities..."></textarea></div><div class="full"><label>Property Photos</label><input id="postPhotos" type="file" accept="image/*" multiple><div class="hint">Prototype only. Do not upload sensitive documents.</div></div></div>
-<div class="location-box"><strong>📍 Property Location *</strong><div class="hint">Click the button, close/return to the map, then click the exact property point.</div><button class="btn-blue" onclick="startLocationSelection()">📍 Select Location on Map</button><div id="locationStatus" class="location-status">Location not selected.</div></div><button class="btn-green" onclick="submitProperty()">✅ Submit Property</button></div></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script><script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
+
+
+<!-- PROPERTY MODAL -->
+
+<div id="propertyModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closePropertyModal()">
+&times;
+</span>
+
+<h2 id="modalTitle" class="modal-title">
+📢 Post Your Property
+</h2>
+
+<div id="modalSub" class="modal-sub">
+
+Add genuine property information and select its exact map location.
+
+</div>
+
+<div id="editInfo" class="edit-info" style="display:none">
+✏️ You are editing an existing property listing.
+</div>
+
+
+<div class="form-grid">
+
+
+<div>
+
+<label>Owner / Agent Name *</label>
+
+<input
+id="postName"
+placeholder="Your name">
+
+</div>
+
+
+<div>
+
+<label>Mobile *</label>
+
+<input
+id="postMobile"
+type="tel"
+inputmode="numeric"
+placeholder="10 digit mobile">
+
+</div>
+
+
+<div>
+
+<label>Property Category *</label>
+
+<select id="postType">
+
+<option value="sale">Sale / Purchase</option>
+<option value="rent">Rent</option>
+<option value="pg">PG</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Sub Category *</label>
+
+<select id="postSubCategory">
+
+<option value="residential_plot">Residential Plot</option>
+<option value="commercial_plot">Commercial Plot</option>
+<option value="house">House</option>
+<option value="flat">Flat / Apartment</option>
+<option value="shop">Shop</option>
+<option value="industrial">Industrial Property</option>
+<option value="agricultural">Agricultural Land</option>
+<option value="rental_house">Rental House</option>
+<option value="rental_flat">Rental Flat</option>
+<option value="boys_pg">Boys PG</option>
+<option value="girls_pg">Girls PG</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Area *</label>
+
+<input
+id="postArea"
+list="areaList"
+placeholder="e.g. Manish Nagar">
+
+</div>
+
+
+<div>
+
+<label>Property Area</label>
+
+<input
+id="postPropertyArea"
+placeholder="e.g. 1200 Sq.ft">
+
+</div>
+
+
+<div>
+
+<label>Price / Rent *</label>
+
+<input
+id="postPrice"
+placeholder="e.g. ₹45 Lakh / ₹18,000 month">
+
+</div>
+
+
+<div>
+
+<label>Road Width</label>
+
+<input
+id="postRoad"
+placeholder="e.g. 30 ft">
+
+</div>
+
+
+<div class="full">
+
+<label>Property Title *</label>
+
+<input
+id="postTitle"
+placeholder="e.g. 1200 Sq.ft Residential Plot">
+
+</div>
+
+
+<div class="full">
+
+<label>Description</label>
+
+<textarea
+id="postDescription"
+placeholder="Property details, landmark, amenities..."></textarea>
+
+</div>
+
+
+<div class="full">
+
+<label>Property Photos</label>
+
+<input
+id="postPhotos"
+type="file"
+accept="image/*"
+multiple>
+
+<div class="hint">
+Prototype only. Do not upload sensitive documents.
+</div>
+
+</div>
+
+</div>
+
+
+<div class="location-box">
+
+<strong>📍 Property Location *</strong>
+
+<div class="hint">
+
+Click the button, close/return to the map, then click the exact property point.
+
+</div>
+
+<button
+class="btn-blue"
+onclick="startLocationSelection()">
+
+📍 Select Location on Map
+
+</button>
+
+<div id="locationStatus" class="location-status">
+
+Location not selected.
+
+</div>
+
+</div>
+
+
+<button
+id="submitPropertyBtn"
+class="btn-green"
+onclick="submitProperty()">
+
+✅ Submit Property
+
+</button>
+
+
+<button
+id="cancelEditBtn"
+class="btn-gray"
+style="display:none"
+onclick="cancelEdit()">
+
+↩ Cancel Edit
+
+</button>
+
+</div>
+
+</div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<script src="https://unpkg.com/leaflet-measure/dist/leaflet-measure.js"></script>
+
+
 <script>
-const NAGPUR=[21.1458,79.0882],map=L.map('map').setView(NAGPUR,11);const osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).addTo(map);const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri'});const street=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri'});L.control.layers({'🗺️ OpenStreetMap':osm,'🛰️ Satellite':satellite,'🛣️ Esri Street':street},{},{collapsed:true}).addTo(map);L.Control.geocoder({defaultMarkGeocode:false}).on('markgeocode',e=>map.fitBounds(e.geocode.bbox)).addTo(map);new L.Control.Measure({primaryLengthUnit:'kilometers',secondaryLengthUnit:'meters',primaryAreaUnit:'hectares',secondaryAreaUnit:'sqmeters'}).addTo(map);
-const bufferLayer=L.layerGroup().addTo(map),urbanLayer=L.layerGroup().addTo(map),propertyLayer=L.layerGroup().addTo(map),propertyHighlightLayer=L.layerGroup().addTo(map);L.circle(NAGPUR,{radius:45000,color:'#1769aa',weight:2,fill:false}).bindPopup('<strong>Nagpur 45 KM Reference Buffer</strong>').addTo(bufferLayer);L.circle(NAGPUR,{radius:18000,color:'#e07a00',weight:2,fillColor:'#e07a00',fillOpacity:.06}).bindPopup('<strong>Nagpur Urban Reference Area</strong>').addTo(urbanLayer);
-const layouts=[],properties=[];let propertyMarkerMap=new Map(),selectedLocation=null,locationPicker=null;
-const city=['Sadar','Manish Nagar','Wardha Road','Pratap Nagar','Dharampeth','Shankar Nagar','Ramdas Peth','Ramdaspeth','Sitabuldi','Congress Nagar','Laxmi Nagar','Bajaj Nagar','Ajni','Somalwada','Trimurti Nagar','Ambazari','Seminary Hills','Jaripatka','Koradi','Kamptee Road','Mahal','Itwari','Gandhibagh','Central Avenue','Nandanvan','Dighori','Manewada','Hudkeshwar','Besa','Bel Tarodi','Narendra Nagar','Chhatrapati Square','Airport','Vayusena Nagar','Jaitala','Hingna Road','Friends Colony','Wadi','Katol Road','Mankapur','Zingabai Takli','Godhni','Koradi Road','Automotive Square','Medical Square','Hanuman Nagar','Dhantoli','Rameshwari','Reshimbagh','Pardi','Lakadganj','Shanti Nagar','Indora','Yashodhara Nagar','Kalmana','Bhandewadi','Teka Naka','Bhande Plot','Umreth Road','Wathoda','Dabha','Vaishali Nagar','New Manakapur','New Sneh Nagar','Somalwada Road','Chinchbhavan','Khapri','MIHAN','Jamtha','Rahate Colony','Vasant Nagar','Medical College','Ajni Railway Station'];const outer=['Hingna','Wanadongri','Kalmeshwar','Saoner','Katol','Narkhed','Ramtek','Kamptee','Mouda','Parseoni','Umred','Kuhi','Bhiwapur','Nagpur Rural','Khapri Railway','Bori','Godhani Railway','Sonegaon Lodhi','Gumgaon','Takalghat','Kanhan','Mahadula','Dahegaon','Digdoh','Isasani','Parsodi','Chincholi','Bidgaon','Tarodi','Koradi','Yerkheda','Dattawadi','Kapsi','Pipla','Waddhamna','Dhamna','Lonara','Vihirgaon'];const areas=[...new Set([...city,...outer])].sort();areas.forEach(a=>document.getElementById('areaList').appendChild(new Option(a,a)));areas.forEach(a=>document.getElementById('layoutArea').appendChild(new Option(a,a)));
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function typeText(t){return t==='sale'?'💰 Sale / Purchase':t==='rent'?'🏠 Rent':t==='pg'?'🛏️ PG':t}function subText(t){return ({residential_plot:'Residential Plot',commercial_plot:'Commercial Plot',house:'House',flat:'Flat / Apartment',shop:'Shop',industrial:'Industrial Property',agricultural:'Agricultural Land',rental_house:'Rental House',rental_flat:'Rental Flat',boys_pg:'Boys PG',girls_pg:'Girls PG'})[t]||t}function color(t){return t==='sale'?'#d32f2f':t==='rent'?'#1976d2':'#7b1fa2'}
-function marker(p,hi=false){const m=L.circleMarker([p.lat,p.lng],{radius:hi?13:8,color:hi?'#f00':color(p.type),fillColor:hi?'#ff0':color(p.type),fillOpacity:.9,weight:hi?4:2});m.bindPopup(`<div class="popup-card"><h3>${esc(p.title)}</h3><div>${typeText(p.type)} • ${subText(p.subCategory)}</div><div>📍 ${esc(p.area)}</div><div>📐 ${esc(p.propertyArea||'Not specified')}</div><div class="popup-price">${esc(p.price)}</div>${p.road?`<div>🛣️ ${esc(p.road)}</div>`:''}<div>👤 ${esc(p.owner)}</div><div class="popup-actions"><a href="tel:${encodeURIComponent(p.mobile)}" style="background:#16803c">📞 Call</a><a href="https://wa.me/91${p.mobile.replace(/\D/g,'')}" target="_blank" style="background:#159447">💬 WhatsApp</a></div></div>`);m.on('click',()=>highlight(p));propertyMarkerMap.set(p.id,m);propertyLayer.addLayer(m);return m}
-function load(){propertyLayer.clearLayers();propertyMarkerMap.clear();properties.forEach(p=>marker(p))}function highlight(p){propertyHighlightLayer.clearLayers();const m=propertyMarkerMap.get(p.id);if(!m)return;m.setStyle({radius:15,color:'#f00',fillColor:'#ff0',fillOpacity:1,weight:5});m.bringToFront();L.circleMarker([p.lat,p.lng],{radius:24,color:'#f00',weight:4,fill:false}).addTo(propertyHighlightLayer);map.setView([p.lat,p.lng],16,{animate:true});setTimeout(()=>m.openPopup(),250)}
-function searchProperties(){const t=document.getElementById('propertyType').value,s=document.getElementById('propertySubCategory').value,a=document.getElementById('propertyArea').value.trim().toLowerCase(),k=document.getElementById('propertyKeyword').value.trim().toLowerCase();const r=properties.filter(p=>(t==='all'||p.type===t)&&(s==='all'||p.subCategory===s)&&(!a||p.area.toLowerCase().includes(a))&&(!k||(p.title+' '+p.area+' '+p.owner+' '+subText(p.subCategory)+' '+(p.description||'')).toLowerCase().includes(k)));propertyLayer.clearLayers();propertyMarkerMap.clear();propertyHighlightLayer.clearLayers();r.forEach(p=>marker(p,true));const box=document.getElementById('propertyResults');box.innerHTML=r.length?`<div class="empty" style="background:#edf8f0;color:#16803c;font-weight:bold">${r.length} property result(s) found</div>`:'<div class="empty">❌ No property found.</div>';r.forEach(p=>{const c=document.createElement('div');c.className='result-card';c.innerHTML=`<h4>${esc(p.title)}</h4><p>${typeText(p.type)} • ${subText(p.subCategory)}</p><p>📍 ${esc(p.area)}</p><p>💵 ${esc(p.price)}</p>`;c.onclick=()=>highlight(p);box.appendChild(c)});if(r.length===1)highlight(r[0]);else if(r.length>1)map.fitBounds(L.latLngBounds(r.map(p=>[p.lat,p.lng])),{padding:[40,40]})}function clearPropertySearch(){document.getElementById('propertyType').value='all';document.getElementById('propertySubCategory').value='all';document.getElementById('propertyArea').value='';document.getElementById('propertyKeyword').value='';propertyHighlightLayer.clearLayers();load();document.getElementById('propertyResults').innerHTML=properties.length?`<div class="empty">${properties.length} listing(s) available.</div>`:'<div class="empty">No property listings available yet. Post the first property.</div>'}function searchLayouts(){document.getElementById('layoutResults').innerHTML='<div class="empty">No layout data loaded. Connect verified layout GIS data to enable this search.</div>'}function calculateCost(){const a=parseFloat(document.getElementById('plotArea').value),r=parseFloat(document.getElementById('plotRate').value),o=document.getElementById('costResult');o.innerHTML=isNaN(a)||isNaN(r)?'Please enter valid area and rate.':`Estimated Property Value:<br><strong style="font-size:17px;color:#16803c">₹${(a*r).toLocaleString('en-IN')}</strong>`}function toggleLayer(n,v){const l=window[n];if(l)v?map.addLayer(l):map.removeLayer(l)}
-function openPropertyModal(){document.getElementById('propertyModal').style.display='block';document.body.style.overflow='hidden'}function closePropertyModal(){document.getElementById('propertyModal').style.display='none';document.body.style.overflow='';map.getContainer().style.cursor=''}window.onclick=e=>{if(e.target.id==='propertyModal')closePropertyModal()};function startLocationSelection(){closePropertyModal();map.getContainer().style.cursor='crosshair';document.getElementById('locationStatus').textContent='📍 Click the exact property location on the map.';map.once('click',e=>{selectedLocation={lat:e.latlng.lat,lng:e.latlng.lng};if(locationPicker)map.removeLayer(locationPicker);locationPicker=L.marker([e.latlng.lat,e.latlng.lng]).addTo(map).bindPopup('Selected property location').openPopup();map.getContainer().style.cursor='';document.getElementById('locationStatus').textContent=`Selected: ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;openPropertyModal()})}
-function submitProperty(){const name=document.getElementById('postName').value.trim(),mobile=document.getElementById('postMobile').value.replace(/\D/g,''),type=document.getElementById('postType').value,sub=document.getElementById('postSubCategory').value,area=document.getElementById('postArea').value.trim(),pa=document.getElementById('postPropertyArea').value.trim(),price=document.getElementById('postPrice').value.trim(),road=document.getElementById('postRoad').value.trim(),title=document.getElementById('postTitle').value.trim(),desc=document.getElementById('postDescription').value.trim();if(!name||mobile.length<10||!area||!price||!title){alert('Please enter Name, valid Mobile, Area, Price/Rent and Property Title.');return}if(!selectedLocation){alert('Please select the property location on the map.');return}const p={id:Date.now(),type,subCategory:sub,owner:name,mobile,area,propertyArea:pa,price,road,title,description:desc,lat:selectedLocation.lat,lng:selectedLocation.lng,status:'pending',createdAt:new Date().toISOString()};properties.push(p);localStorage.setItem('nagpurGeoPortalProperties',JSON.stringify(properties));load();clearForm();closePropertyModal();document.getElementById('propertyResults').innerHTML='<div class="empty" style="background:#edf8f0;color:#16803c"><strong>✅ Property submitted.</strong><br>Status: Pending approval.</div>';highlight(p);alert('Property submitted successfully. Status: Pending approval.')}function clearForm(){['postName','postMobile','postArea','postPropertyArea','postPrice','postRoad','postTitle','postDescription','postPhotos'].forEach(id=>document.getElementById(id).value='');selectedLocation=null;document.getElementById('locationStatus').textContent='Location not selected.';if(locationPicker){map.removeLayer(locationPicker);locationPicker=null}}
-try{const saved=JSON.parse(localStorage.getItem('nagpurGeoPortalProperties')||'[]');if(Array.isArray(saved))saved.forEach(p=>{if(p&&p.lat!=null&&p.lng!=null)properties.push(p)})}catch(e){}load();clearPropertySearch();
-const legend=L.control({position:'bottomright'});legend.onAdd=()=>{const d=L.DomUtil.create('div','legend');d.innerHTML='<strong>Map Legend</strong><div class="legend-item"><span class="legend-color" style="background:#d32f2f"></span>Sale / Purchase</div><div class="legend-item"><span class="legend-color" style="background:#1976d2"></span>Rental</div><div class="legend-item"><span class="legend-color" style="background:#7b1fa2"></span>PG</div>';return d};legend.addTo(map);
-</script></body></html>
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+const NAGPUR=[21.1458,79.0882];
+
+const map=L.map('map').setView(NAGPUR,11);
+
+
+const osm=L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+attribution:'© OpenStreetMap contributors'
+}
+).addTo(map);
+
+
+const satellite=L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+{
+attribution:'Tiles © Esri'
+}
+);
+
+
+const street=L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+{
+attribution:'Tiles © Esri'
+}
+);
+
+
+L.control.layers(
+{
+'🗺️ OpenStreetMap':osm,
+'🛰️ Satellite':satellite,
+'🛣️ Esri Street':street
+},
+{},
+{
+collapsed:true
+}
+).addTo(map);
+
+
+L.Control.geocoder({
+defaultMarkGeocode:false
+})
+.on('markgeocode',e=>{
+map.fitBounds(e.geocode.bbox);
+})
+.addTo(map);
+
+
+new L.Control.Measure({
+primaryLengthUnit:'kilometers',
+secondaryLengthUnit:'meters',
+primaryAreaUnit:'hectares',
+secondaryAreaUnit:'sqmeters'
+}).addTo(map);
+
+
+/* =========================================================
+   GIS LAYERS
+========================================================= */
+
+const bufferLayer=L.layerGroup().addTo(map);
+
+const urbanLayer=L.layerGroup().addTo(map);
+
+const propertyLayer=L.layerGroup().addTo(map);
+
+const propertyHighlightLayer=L.layerGroup().addTo(map);
+
+
+L.circle(
+NAGPUR,
+{
+radius:45000,
+color:'#1769aa',
+weight:2,
+fill:false
+}
+)
+.bindPopup(
+'<strong>Nagpur 45 KM Reference Buffer</strong>'
+)
+.addTo(bufferLayer);
+
+
+L.circle(
+NAGPUR,
+{
+radius:18000,
+color:'#e07a00',
+weight:2,
+fillColor:'#e07a00',
+fillOpacity:.06
+}
+)
+.bindPopup(
+'<strong>Nagpur Urban Reference Area</strong>'
+)
+.addTo(urbanLayer);
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+const layouts=[];
+
+const properties=[];
+
+let propertyMarkerMap=new Map();
+
+let selectedLocation=null;
+
+let locationPicker=null;
+
+let editingPropertyId=null;
+
+
+/* =========================================================
+   AREA DATA
+========================================================= */
+
+const city=[
+'Sadar',
+'Manish Nagar',
+'Wardha Road',
+'Pratap Nagar',
+'Dharampeth',
+'Shankar Nagar',
+'Ramdas Peth',
+'Ramdaspeth',
+'Sitabuildi',
+'Congress Nagar',
+'Laxmi Nagar',
+'Bajaj Nagar',
+'Ajni',
+'Somalwada',
+'Trimurti Nagar',
+'Ambazari',
+'Seminary Hills',
+'Jaripatka',
+'Koradi',
+'Kamptee Road',
+'Mahal',
+'Itwari',
+'Gandhibagh',
+'Central Avenue',
+'Nandanvan',
+'Dighori',
+'Manewada',
+'Hudkeshwar',
+'Besa',
+'Bel Tarodi',
+'Narendra Nagar',
+'Chhatrapati Square',
+'Airport',
+'Vayusena Nagar',
+'Jaitala',
+'Hingna Road',
+'Friends Colony',
+'Wadi',
+'Katol Road',
+'Mankapur',
+'Zingabai Takli',
+'Godhni',
+'Koradi Road',
+'Automotive Square',
+'Medical Square',
+'Hanuman Nagar',
+'Dhantoli',
+'Rameshwari',
+'Reshimbagh',
+'Pardi',
+'Lakadganj',
+'Shanti Nagar',
+'Indora',
+'Yashodhara Nagar',
+'Kalmana',
+'Bhandewadi',
+'Teka Naka',
+'Bhande Plot',
+'Umreth Road',
+'Wathoda',
+'Dabha',
+'Vaishali Nagar',
+'New Manakapur',
+'New Sneh Nagar',
+'Somalwada Road',
+'Chinchbhavan',
+'Khapri',
+'MIHAN',
+'Jamtha',
+'Rahate Colony',
+'Vasant Nagar',
+'Medical College',
+'Ajni Railway Station'
+];
+
+
+const outer=[
+'Hingna',
+'Wanadongri',
+'Kalmeshwar',
+'Saoner',
+'Katol',
+'Narkhed',
+'Ramtek',
+'Kamptee',
+'Mouda',
+'Parseoni',
+'Umred',
+'Kuhi',
+'Bhiwapur',
+'Nagpur Rural',
+'Khapri Railway',
+'Bori',
+'Godhani Railway',
+'Sonegaon Lodhi',
+'Gumgaon',
+'Takalghat',
+'Kanhan',
+'Mahadula',
+'Dahegaon',
+'Digdoh',
+'Isasani',
+'Parsodi',
+'Chincholi',
+'Bidgaon',
+'Tarodi',
+'Koradi',
+'Yerkheda',
+'Dattawadi',
+'Kapsi',
+'Pipla',
+'Waddhamna',
+'Dhamna',
+'Lonara',
+'Vihirgaon'
+];
+
+
+const areas=[
+...new Set([
+...city,
+...outer
+])
+].sort();
+
+
+areas.forEach(a=>{
+
+document
+.getElementById('areaList')
+.appendChild(new Option(a,a));
+
+});
+
+
+areas.forEach(a=>{
+
+document
+.getElementById('layoutArea')
+.appendChild(new Option(a,a));
+
+});
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function esc(s){
+
+return String(s??'')
+.replace(
+/[&<>"']/g,
+c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#039;'
+}[c])
+);
+
+}
+
+
+function typeText(t){
+
+return t==='sale'
+?'💰 Sale / Purchase'
+:t==='rent'
+?'🏠 Rent'
+:t==='pg'
+?'🛏️ PG'
+:t;
+
+}
+
+
+function subText(t){
+
+return ({
+residential_plot:'Residential Plot',
+commercial_plot:'Commercial Plot',
+house:'House',
+flat:'Flat / Apartment',
+shop:'Shop',
+industrial:'Industrial Property',
+agricultural:'Agricultural Land',
+rental_house:'Rental House',
+rental_flat:'Rental Flat',
+boys_pg:'Boys PG',
+girls_pg:'Girls PG'
+})[t]||t;
+
+}
+
+
+function color(t){
+
+return t==='sale'
+?'#d32f2f'
+:t==='rent'
+?'#1976d2'
+:'#7b1fa2';
+
+}
+
+
+/* =========================================================
+   MARKER
+========================================================= */
+
+function marker(p,hi=false){
+
+const m=L.circleMarker(
+[p.lat,p.lng],
+{
+radius:hi?13:8,
+color:hi?'#f00':color(p.type),
+fillColor:hi?'#ff0':color(p.type),
+fillOpacity:.9,
+weight:hi?4:2
+}
+);
+
+
+m.bindPopup(`
+
+<div class="popup-card">
+
+<h3>${esc(p.title)}</h3>
+
+<div>
+${typeText(p.type)}
+•
+${subText(p.subCategory)}
+</div>
+
+<div>
+📍 ${esc(p.area)}
+</div>
+
+<div>
+📐 ${esc(p.propertyArea||'Not specified')}
+</div>
+
+<div class="popup-price">
+${esc(p.price)}
+</div>
+
+${p.road
+?`<div>🛣️ ${esc(p.road)}</div>`
+:''}
+
+<div>
+👤 ${esc(p.owner)}
+</div>
+
+<div class="status-badge">
+${p.status==='pending'
+?'Pending Approval'
+:'Published'}
+</div>
+
+
+<div class="popup-actions">
+
+<a
+href="tel:${encodeURIComponent(p.mobile)}"
+style="background:#16803c">
+
+📞 Call
+
+</a>
+
+
+<a
+href="https://wa.me/91${p.mobile.replace(/\D/g,'')}"
+target="_blank"
+style="background:#159447">
+
+💬 WhatsApp
+
+</a>
+
+</div>
+
+
+<div class="popup-actions">
+
+<button
+class="popup-button"
+style="background:#1769aa"
+onclick="editProperty(${p.id})">
+
+✏️ Edit
+
+</button>
+
+
+<button
+class="popup-button"
+style="background:#d32f2f"
+onclick="deleteProperty(${p.id})">
+
+🗑️ Delete
+
+</button>
+
+</div>
+
+
+</div>
+
+`);
+
+
+m.on(
+'click',
+()=>{
+highlight(p);
+}
+);
+
+
+propertyMarkerMap.set(
+p.id,
+m
+);
+
+propertyLayer.addLayer(m);
+
+return m;
+
+}
+
+
+/* =========================================================
+   LOAD PROPERTIES
+========================================================= */
+
+function load(){
+
+propertyLayer.clearLayers();
+
+propertyMarkerMap.clear();
+
+properties.forEach(p=>{
+
+marker(p);
+
+});
+
+}
+
+
+/* =========================================================
+   HIGHLIGHT
+========================================================= */
+
+function highlight(p){
+
+propertyHighlightLayer.clearLayers();
+
+const m=propertyMarkerMap.get(p.id);
+
+if(!m)return;
+
+
+m.setStyle({
+radius:15,
+color:'#f00',
+fillColor:'#ff0',
+fillOpacity:1,
+weight:5
+});
+
+
+m.bringToFront();
+
+
+L.circleMarker(
+[p.lat,p.lng],
+{
+radius:24,
+color:'#f00',
+weight:4,
+fill:false
+}
+)
+.addTo(propertyHighlightLayer);
+
+
+map.setView(
+[p.lat,p.lng],
+16,
+{
+animate:true
+}
+);
+
+
+setTimeout(
+()=>{
+m.openPopup();
+},
+250
+);
+
+}
+
+
+/* =========================================================
+   SEARCH PROPERTY
+========================================================= */
+
+function searchProperties(){
+
+const t=
+document.getElementById('propertyType').value;
+
+const s=
+document.getElementById('propertySubCategory').value;
+
+const a=
+document.getElementById('propertyArea')
+.value
+.trim()
+.toLowerCase();
+
+const k=
+document.getElementById('propertyKeyword')
+.value
+.trim()
+.toLowerCase();
+
+
+const r=properties.filter(p=>
+
+(t==='all'||p.type===t)
+
+&&
+
+(s==='all'||p.subCategory===s)
+
+&&
+
+(
+!a ||
+(p.area||'')
+.toLowerCase()
+.includes(a)
+)
+
+&&
+
+(
+!k ||
+
+(
+(p.title||'')+
+' '+
+(p.area||'')+
+' '+
+(p.owner||'')+
+' '+
+subText(p.subCategory)+
+' '+
+(p.description||'')
+)
+.toLowerCase()
+.includes(k)
+)
+
+);
+
+
+propertyLayer.clearLayers();
+
+propertyMarkerMap.clear();
+
+propertyHighlightLayer.clearLayers();
+
+
+r.forEach(p=>{
+
+marker(p,true);
+
+});
+
+
+const box=
+document.getElementById('propertyResults');
+
+
+box.innerHTML=r.length
+
+?
+
+`<div class="empty"
+style="background:#edf8f0;color:#16803c;font-weight:bold">
+
+${r.length} property result(s) found
+
+</div>`
+
+:
+
+'<div class="empty">❌ No property found.</div>';
+
+
+r.forEach(p=>{
+
+const c=document.createElement('div');
+
+c.className='result-card';
+
+
+c.innerHTML=`
+
+<h4>
+${esc(p.title)}
+</h4>
+
+<p>
+${typeText(p.type)}
+•
+${subText(p.subCategory)}
+</p>
+
+<p>
+📍 ${esc(p.area)}
+</p>
+
+<p>
+💵 ${esc(p.price)}
+</p>
+
+<p>
+👤 ${esc(p.owner)}
+</p>
+
+<div class="result-buttons">
+
+<button
+class="btn-blue"
+onclick="event.stopPropagation();editProperty(${p.id})">
+
+✏️ Edit
+
+</button>
+
+<button
+class="btn-red"
+onclick="event.stopPropagation();deleteProperty(${p.id})">
+
+🗑️ Delete
+
+</button>
+
+</div>
+
+`;
+
+
+c.onclick=()=>highlight(p);
+
+
+box.appendChild(c);
+
+});
+
+
+if(r.length===1){
+
+highlight(r[0]);
+
+}
+
+else if(r.length>1){
+
+map.fitBounds(
+L.latLngBounds(
+r.map(p=>[p.lat,p.lng])
+),
+{
+padding:[40,40]
+}
+);
+
+}
+
+}
+
+
+/* =========================================================
+   CLEAR SEARCH
+========================================================= */
+
+function clearPropertySearch(){
+
+document.getElementById('propertyType').value='all';
+
+document.getElementById('propertySubCategory').value='all';
+
+document.getElementById('propertyArea').value='';
+
+document.getElementById('propertyKeyword').value='';
+
+propertyHighlightLayer.clearLayers();
+
+load();
+
+
+document.getElementById('propertyResults').innerHTML=
+
+properties.length
+
+?
+
+`<div class="empty">
+${properties.length} listing(s) available.
+</div>`
+
+:
+
+`<div class="empty">
+No property listings available yet.
+Post the first property.
+</div>`;
+
+}
+
+
+/* =========================================================
+   LAYOUT SEARCH
+========================================================= */
+
+function searchLayouts(){
+
+document.getElementById('layoutResults').innerHTML=
+
+'<div class="empty">No layout data loaded. Connect verified layout GIS data to enable this search.</div>';
+
+}
+
+
+/* =========================================================
+   COSTING
+========================================================= */
+
+function calculateCost(){
+
+const a=parseFloat(
+document.getElementById('plotArea').value
+);
+
+const r=parseFloat(
+document.getElementById('plotRate').value
+);
+
+const o=
+document.getElementById('costResult');
+
+
+o.innerHTML=
+
+isNaN(a)||isNaN(r)
+
+?
+
+'Please enter valid area and rate.'
+
+:
+
+`Estimated Property Value:<br>
+
+<strong
+style="font-size:17px;color:#16803c">
+
+₹${(a*r).toLocaleString('en-IN')}
+
+</strong>`;
+
+}
+
+
+/* =========================================================
+   LAYER TOGGLE
+========================================================= */
+
+function toggleLayer(n,v){
+
+const l=window[n];
+
+if(l){
+
+v
+?map.addLayer(l)
+:map.removeLayer(l);
+
+}
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openPropertyModal(){
+
+editingPropertyId=null;
+
+document.getElementById('modalTitle')
+.textContent='📢 Post Your Property';
+
+document.getElementById('modalSub')
+.textContent=
+'Add genuine property information and select its exact map location.';
+
+document.getElementById('editInfo')
+.style.display='none';
+
+
+document.getElementById('submitPropertyBtn')
+.textContent='✅ Submit Property';
+
+
+document.getElementById('cancelEditBtn')
+.style.display='none';
+
+
+document.getElementById('propertyModal')
+.style.display='block';
+
+document.body.style.overflow='hidden';
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closePropertyModal(){
+
+document.getElementById('propertyModal')
+.style.display='none';
+
+document.body.style.overflow='';
+
+map.getContainer().style.cursor='';
+
+}
+
+
+/* =========================================================
+   OUTSIDE MODAL CLICK
+========================================================= */
+
+window.onclick=e=>{
+
+if(e.target.id==='propertyModal'){
+
+closePropertyModal();
+
+}
+
+};
+
+
+/* =========================================================
+   LOCATION SELECTION
+========================================================= */
+
+function startLocationSelection(){
+
+closePropertyModal();
+
+
+map.getContainer().style.cursor='crosshair';
+
+
+document.getElementById('locationStatus')
+.textContent=
+'📍 Click the exact property location on the map.';
+
+
+map.once(
+'click',
+e=>{
+
+selectedLocation={
+lat:e.latlng.lat,
+lng:e.latlng.lng
+};
+
+
+if(locationPicker){
+
+map.removeLayer(locationPicker);
+
+}
+
+
+locationPicker=
+L.marker(
+[
+e.latlng.lat,
+e.latlng.lng
+]
+)
+.addTo(map)
+.bindPopup(
+'Selected property location'
+)
+.openPopup();
+
+
+map.getContainer().style.cursor='';
+
+
+document.getElementById('locationStatus')
+.textContent=
+`Selected: ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
+
+
+openPropertyModal();
+
+}
+
+);
+
+}
+
+
+/* =========================================================
+   SUBMIT / UPDATE PROPERTY
+========================================================= */
+
+function submitProperty(){
+
+const name=
+document.getElementById('postName')
+.value.trim();
+
+const mobile=
+document.getElementById('postMobile')
+.value
+.replace(/\D/g,'');
+
+const type=
+document.getElementById('postType').value;
+
+const sub=
+document.getElementById('postSubCategory').value;
+
+const area=
+document.getElementById('postArea')
+.value.trim();
+
+const pa=
+document.getElementById('postPropertyArea')
+.value.trim();
+
+const price=
+document.getElementById('postPrice')
+.value.trim();
+
+const road=
+document.getElementById('postRoad')
+.value.trim();
+
+const title=
+document.getElementById('postTitle')
+.value.trim();
+
+const desc=
+document.getElementById('postDescription')
+.value.trim();
+
+
+if(
+!name ||
+mobile.length<10 ||
+!area ||
+!price ||
+!title
+){
+
+alert(
+'Please enter Name, valid Mobile, Area, Price/Rent and Property Title.'
+);
+
+return;
+
+}
+
+
+if(!selectedLocation){
+
+alert(
+'Please select the property location on the map.'
+);
+
+return;
+
+}
+
+
+/* =========================================================
+   EDIT EXISTING PROPERTY
+========================================================= */
+
+if(editingPropertyId!==null){
+
+const index=
+properties.findIndex(
+p=>p.id===editingPropertyId
+);
+
+
+if(index===-1){
+
+alert(
+'Property record not found.'
+);
+
+return;
+
+}
+
+
+const old=properties[index];
+
+
+properties[index]={
+
+...old,
+
+type:type,
+
+subCategory:sub,
+
+owner:name,
+
+mobile:mobile,
+
+area:area,
+
+propertyArea:pa,
+
+price:price,
+
+road:road,
+
+title:title,
+
+description:desc,
+
+lat:selectedLocation.lat,
+
+lng:selectedLocation.lng,
+
+updatedAt:new Date().toISOString()
+
+};
+
+
+localStorage.setItem(
+'nagpurGeoPortalProperties',
+JSON.stringify(properties)
+);
+
+
+const updated=
+properties[index];
+
+
+editingPropertyId=null;
+
+
+load();
+
+clearForm();
+
+closePropertyModal();
+
+
+document.getElementById('propertyResults')
+.innerHTML=
+
+`<div class="empty"
+style="background:#edf8f0;color:#16803c">
+
+<strong>
+✅ Property updated successfully.
+</strong>
+
+</div>`;
+
+
+highlight(updated);
+
+
+alert(
+'Property updated successfully.'
+);
+
+return;
+
+}
+
+
+/* =========================================================
+   NEW PROPERTY
+========================================================= */
+
+const p={
+
+id:Date.now(),
+
+type:type,
+
+subCategory:sub,
+
+owner:name,
+
+mobile:mobile,
+
+area:area,
+
+propertyArea:pa,
+
+price:price,
+
+road:road,
+
+title:title,
+
+description:desc,
+
+lat:selectedLocation.lat,
+
+lng:selectedLocation.lng,
+
+status:'pending',
+
+createdAt:new Date().toISOString()
+
+};
+
+
+properties.push(p);
+
+
+localStorage.setItem(
+'nagpurGeoPortalProperties',
+JSON.stringify(properties)
+);
+
+
+load();
+
+clearForm();
+
+closePropertyModal();
+
+
+document.getElementById('propertyResults')
+.innerHTML=
+
+`<div class="empty"
+style="background:#edf8f0;color:#16803c">
+
+<strong>
+✅ Property submitted.
+</strong>
+
+<br>
+
+Status: Pending approval.
+
+</div>`;
+
+
+highlight(p);
+
+
+alert(
+'Property submitted successfully. Status: Pending approval.'
+);
+
+}
+
+
+/* =========================================================
+   EDIT PROPERTY
+========================================================= */
+
+function editProperty(id){
+
+const p=
+properties.find(
+x=>x.id===id
+);
+
+
+if(!p){
+
+alert(
+'Property record not found.'
+);
+
+return;
+
+}
+
+
+editingPropertyId=id;
+
+
+/* FORM DATA */
+
+document.getElementById('postName')
+.value=p.owner||'';
+
+document.getElementById('postMobile')
+.value=p.mobile||'';
+
+document.getElementById('postType')
+.value=p.type||'sale';
+
+document.getElementById('postSubCategory')
+.value=p.subCategory||'residential_plot';
+
+document.getElementById('postArea')
+.value=p.area||'';
+
+document.getElementById('postPropertyArea')
+.value=p.propertyArea||'';
+
+document.getElementById('postPrice')
+.value=p.price||'';
+
+document.getElementById('postRoad')
+.value=p.road||'';
+
+document.getElementById('postTitle')
+.value=p.title||'';
+
+document.getElementById('postDescription')
+.value=p.description||'';
+
+
+/* LOCATION */
+
+selectedLocation={
+lat:Number(p.lat),
+lng:Number(p.lng)
+};
+
+
+if(locationPicker){
+
+map.removeLayer(locationPicker);
+
+}
+
+
+locationPicker=
+L.marker(
+[
+p.lat,
+p.lng
+]
+)
+.addTo(map)
+.bindPopup(
+'📍 Existing property location'
+)
+.openPopup();
+
+
+document.getElementById('locationStatus')
+.textContent=
+`Selected: ${Number(p.lat).toFixed(6)}, ${Number(p.lng).toFixed(6)}`;
+
+
+/* MODAL */
+
+document.getElementById('modalTitle')
+.textContent='✏️ Edit Property';
+
+document.getElementById('modalSub')
+.textContent=
+'Update property information and location.';
+
+document.getElementById('editInfo')
+.style.display='block';
+
+
+document.getElementById('submitPropertyBtn')
+.textContent='💾 Update Property';
+
+
+document.getElementById('cancelEditBtn')
+.style.display='block';
+
+
+document.getElementById('propertyModal')
+.style.display='block';
+
+document.body.style.overflow='hidden';
+
+}
+
+
+/* =========================================================
+   DELETE PROPERTY
+========================================================= */
+
+function deleteProperty(id){
+
+const p=
+properties.find(
+x=>x.id===id
+);
+
+
+if(!p){
+
+alert(
+'Property record not found.'
+);
+
+return;
+
+}
+
+
+const ok=confirm(
+
+`Delete this property?
+
+${p.title}
+
+📍 ${p.area}
+
+💰 ${p.price}
+
+This action cannot be undone.`
+
+);
+
+
+if(!ok){
+
+return;
+
+}
+
+
+const index=
+properties.findIndex(
+x=>x.id===id
+);
+
+
+if(index!==-1){
+
+properties.splice(
+index,
+1
+);
+
+}
+
+
+localStorage.setItem(
+'nagpurGeoPortalProperties',
+JSON.stringify(properties)
+);
+
+
+propertyHighlightLayer.clearLayers();
+
+
+load();
+
+
+document.getElementById('propertyResults')
+.innerHTML=
+
+properties.length
+
+?
+
+`<div class="empty"
+style="background:#fff4f4;color:#d32f2f">
+
+<strong>
+🗑️ Property deleted successfully.
+</strong>
+
+<br>
+
+${properties.length}
+listing(s) remaining.
+
+</div>`
+
+:
+
+`<div class="empty">
+
+No property listings available yet.
+
+</div>`;
+
+
+alert(
+'Property deleted successfully.'
+);
+
+}
+
+
+/* =========================================================
+   CANCEL EDIT
+========================================================= */
+
+function cancelEdit(){
+
+editingPropertyId=null;
+
+clearForm();
+
+closePropertyModal();
+
+}
+
+
+/* =========================================================
+   CLEAR FORM
+========================================================= */
+
+function clearForm(){
+
+[
+'postName',
+'postMobile',
+'postArea',
+'postPropertyArea',
+'postPrice',
+'postRoad',
+'postTitle',
+'postDescription',
+'postPhotos'
+]
+.forEach(id=>{
+
+const el=
+document.getElementById(id);
+
+if(el){
+
+el.value='';
+
+}
+
+});
+
+
+document.getElementById('postType')
+.value='sale';
+
+
+document.getElementById('postSubCategory')
+.value='residential_plot';
+
+
+selectedLocation=null;
+
+editingPropertyId=null;
+
+
+document.getElementById('locationStatus')
+.textContent=
+'Location not selected.';
+
+
+document.getElementById('modalTitle')
+.textContent=
+'📢 Post Your Property';
+
+
+document.getElementById('modalSub')
+.textContent=
+'Add genuine property information and select its exact map location.';
+
+
+document.getElementById('editInfo')
+.style.display='none';
+
+
+document.getElementById('submitPropertyBtn')
+.textContent=
+'✅ Submit Property';
+
+
+document.getElementById('cancelEditBtn')
+.style.display='none';
+
+
+if(locationPicker){
+
+map.removeLayer(locationPicker);
+
+locationPicker=null;
+
+}
+
+}
+
+
+/* =========================================================
+   LOAD SAVED LOCAL STORAGE DATA
+========================================================= */
+
+try{
+
+const saved=
+JSON.parse(
+localStorage.getItem(
+'nagpurGeoPortalProperties'
+)||'[]'
+);
+
+
+if(Array.isArray(saved)){
+
+saved.forEach(p=>{
+
+if(
+p &&
+p.lat!=null &&
+p.lng!=null
+){
+
+properties.push(p);
+
+}
+
+});
+
+}
+
+}catch(e){
+
+console.error(
+'Property loading error:',
+e
+);
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+load();
+
+clearPropertySearch();
+
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+const legend=
+L.control({
+position:'bottomright'
+});
+
+
+legend.onAdd=()=>{
+
+const d=
+L.DomUtil.create(
+'div',
+'legend'
+);
+
+
+d.innerHTML=`
+
+<strong>
+Map Legend
+</strong>
+
+<div class="legend-item">
+
+<span
+class="legend-color"
+style="background:#d32f2f">
+</span>
+
+Sale / Purchase
+
+</div>
+
+<div class="legend-item">
+
+<span
+class="legend-color"
+style="background:#1976d2">
+</span>
+
+Rental
+
+</div>
+
+<div class="legend-item">
+
+<span
+class="legend-color"
+style="background:#7b1fa2">
+</span>
+
+PG
+
+</div>
+
+`;
+
+return d;
+
+};
+
+
+legend.addTo(map);
+
+
+/* =========================================================
+   ESCAPE KEY - CLOSE MODAL
+========================================================= */
+
+document.addEventListener(
+'keydown',
+e=>{
+
+if(e.key==='Escape'){
+
+closePropertyModal();
+
+}
+
+});
+
+
+</script>
+
+</body>
+</html>
