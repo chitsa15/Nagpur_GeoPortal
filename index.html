@@ -612,6 +612,72 @@ background:#673ab7;
 color:white !important;
 }
 
+/* ================= LAND DEMARCATION ================= */
+
+.landModeBox{
+border:1px solid #9bc7d1;
+background:#f2fbfc;
+border-radius:9px;
+padding:9px;
+margin-top:5px;
+}
+
+.landModeTitle{
+font-size:12px;
+font-weight:700;
+color:#075d69;
+margin-bottom:5px;
+}
+
+.landDrawStatus{
+font-size:11px;
+color:#475569;
+line-height:1.5;
+margin-top:7px;
+}
+
+.landInfoBox{
+background:#f8fafc;
+border:1px solid #e2e8f0;
+border-radius:8px;
+padding:8px;
+font-size:11px;
+line-height:1.6;
+}
+
+.landPopupTitle{
+font-size:15px;
+font-weight:bold;
+color:#075d69;
+margin-bottom:6px;
+}
+
+.landPopupMeta{
+font-size:11px;
+line-height:1.65;
+color:#475569;
+}
+
+.landPolygon{
+stroke:#087f8c;
+stroke-width:3;
+fill:#087f8c;
+fill-opacity:.18;
+}
+
+.landPolygonSelected{
+stroke:#f59e0b;
+stroke-width:4;
+fill:#f59e0b;
+fill-opacity:.22;
+}
+
+.landVertex{
+background:#dc3545;
+border:2px solid white;
+border-radius:50%;
+}
+
 /* ================= ZOOM CONTROL ================= */
 
 .leaflet-control-zoom{
@@ -968,10 +1034,41 @@ style="width:auto">
 Published Properties
 </label>
 
+
+<div class="landModeBox">
+
+<div class="landModeTitle">
+📐 Land Demarcation
+</div>
+
+<div class="smallText">
+Create and store a GIS land parcel separately
+from property listings.
+</div>
+
+<button
+class="btnPrimary full"
+style="margin-top:7px"
+onclick="openLandDemarcation()">
+＋ Create Land Parcel
+</button>
+
+<button
+class="btnLight full"
+style="margin-top:6px"
+onclick="showLandParcelList()">
+📋 View Land Parcels
+</button>
+
+</div>
+
+
 <p class="smallText">
+
 GIS reference layers are indicative. Actual
 survey / legal verification should be done from
 authoritative sources.
+
 </p>
 
 </div>
@@ -1103,6 +1200,14 @@ class="legendDot"
 style="background:#f59e0b">
 </span>
 Selected Property
+</div>
+
+<div>
+<span
+class="legendDot"
+style="background:#087f8c">
+</span>
+Land Parcel
 </div>
 
 </div>
@@ -1313,6 +1418,316 @@ Submit Property
 </div>
 
 
+<!-- ================= LAND DEMARCATION MODAL ================= -->
+
+<div
+id="landModal"
+class="modal">
+
+<div class="modalHeader">
+
+<h3 id="landModalTitle">
+📐 Land Demarcation
+</h3>
+
+<button
+class="modalClose"
+onclick="closeLandModal()">
+×
+</button>
+
+</div>
+
+<div class="modalBody">
+
+<div class="landInfoBox">
+
+<b>Phase 1:</b> Draw a land parcel polygon
+on the map. Area and perimeter will be
+calculated automatically.
+
+</div>
+
+
+<label>Land ID *</label>
+
+<input
+id="landId"
+placeholder="e.g. LAND_001">
+
+
+<label>Survey No / Gat No</label>
+
+<input
+id="landSurveyNo"
+placeholder="e.g. Gat No. 125/2">
+
+
+<div class="row">
+
+<div>
+
+<label>Village</label>
+
+<input
+id="landVillage"
+placeholder="Village">
+
+</div>
+
+<div>
+
+<label>Taluka</label>
+
+<input
+id="landTaluka"
+placeholder="Taluka">
+
+</div>
+
+</div>
+
+
+<label>District</label>
+
+<input
+id="landDistrict"
+value="Nagpur"
+placeholder="District">
+
+
+<div class="row">
+
+<div>
+
+<label>Land Use</label>
+
+<select id="landUse">
+
+<option value="Agricultural">Agricultural</option>
+<option value="Residential">Residential</option>
+<option value="Commercial">Commercial</option>
+<option value="Industrial">Industrial</option>
+<option value="Mixed Use">Mixed Use</option>
+<option value="Open Land">Open Land</option>
+<option value="Other">Other</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Status</label>
+
+<select id="landStatus">
+
+<option value="Surveyed">Surveyed</option>
+<option value="Proposed">Proposed</option>
+<option value="Existing">Existing</option>
+<option value="Under Verification">Under Verification</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<label>Survey Method</label>
+
+<select id="landSurveyMethod">
+
+<option value="DGPS">DGPS</option>
+<option value="Total Station">Total Station</option>
+<option value="GPS">GPS</option>
+<option value="Digitized">Digitized</option>
+<option value="Other">Other</option>
+
+</select>
+
+
+<label>Demarcation Date</label>
+
+<input
+type="date"
+id="landDate">
+
+
+<label>Client / Owner Reference</label>
+
+<input
+id="landOwnerRef"
+placeholder="Client / Owner reference">
+
+
+<label>Remarks</label>
+
+<textarea
+id="landRemarks"
+placeholder="Survey remarks, verification notes, etc."></textarea>
+
+
+<div class="locationBox">
+
+<strong style="font-size:12px">
+🗺️ Polygon Geometry
+</strong>
+
+<div
+id="landDrawStatus"
+class="landDrawStatus">
+
+No polygon drawn.
+
+</div>
+
+<div class="row" style="margin-top:8px">
+
+<button
+class="btnBlue"
+onclick="startLandDrawing()">
+
+＋ Draw Polygon
+
+</button>
+
+<button
+class="btnOrange"
+onclick="finishLandDrawing()">
+
+✓ Finish
+
+</button>
+
+</div>
+
+<button
+class="btnGray full"
+style="margin-top:6px"
+onclick="cancelLandDrawing()">
+
+Cancel Drawing
+
+</button>
+
+</div>
+
+
+<div
+id="landCalculated"
+class="landInfoBox"
+style="margin-top:9px">
+
+Area: Not calculated<br>
+Perimeter: Not calculated
+
+</div>
+
+</div>
+
+
+<div class="modalFooter">
+
+<button
+class="btnGray"
+onclick="closeLandModal()">
+
+Cancel
+
+</button>
+
+<button
+class="btnPrimary"
+onclick="saveLandParcel()">
+
+Save Land Parcel
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= LAND DETAILS MODAL ================= -->
+
+<div
+id="landDetailsModal"
+class="modal">
+
+<div class="modalHeader">
+
+<h3>
+📋 Land Parcel Details
+</h3>
+
+<button
+class="modalClose"
+onclick="closeLandDetails()">
+×
+</button>
+
+</div>
+
+<div
+id="landDetailsBody"
+class="modalBody">
+</div>
+
+<div class="modalFooter">
+
+<button
+class="btnGray"
+onclick="closeLandDetails()">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= LAND LIST MODAL ================= -->
+
+<div
+id="landListModal"
+class="modal">
+
+<div class="modalHeader">
+
+<h3>
+📐 Land Parcel Database
+</h3>
+
+<button
+class="modalClose"
+onclick="closeLandList()">
+×
+</button>
+
+</div>
+
+<div
+id="landListBody"
+class="modalBody">
+</div>
+
+<div class="modalFooter">
+
+<button
+class="btnGray"
+onclick="closeLandList()">
+Close
+</button>
+
+</div>
+
+</div>
+
+
 <!-- ================= ADMIN PANEL ================= -->
 
 <div
@@ -1380,9 +1795,16 @@ const NAGPUR = [21.1458,79.0882];
 const STORAGE_KEY =
 "nagpurGeoPortalProperties_v2";
 
+const LAND_STORAGE_KEY =
+"nagpurGeoPortalLandParcels_v1";
+
 let properties=[];
 
 let layouts=[];
+
+let landParcels=[];
+
+let landMarkerLayers={};
 
 let propertyMarkerMap={};
 
@@ -1392,7 +1814,19 @@ let locationPicker=null;
 
 let editingPropertyId=null;
 
+let editingLandId=null;
+
 let propertyHighlightLayer=null;
+
+let landDrawing=false;
+
+let landDrawPoints=[];
+
+let landTempLine=null;
+
+let landTempPolygon=null;
+
+let landTempMarkers=[];
 
 
 /* =====================================================
@@ -1484,12 +1918,6 @@ const nagpurAreas=[
 /* =====================================================
 MAP
 ===================================================== */
-
-/*
-Enhanced zoom:
-11 = default
-22 = maximum map zoom
-*/
 
 const map=L.map("map",{
 
@@ -1650,6 +2078,15 @@ let propertyLayer=
 L.layerGroup().addTo(map);
 
 
+/*
+Separate GIS layer for land parcels.
+It is intentionally NOT merged with propertyLayer.
+*/
+
+let landParcelLayer=
+L.layerGroup().addTo(map);
+
+
 /* =====================================================
 HELPERS
 ===================================================== */
@@ -1742,9 +2179,7 @@ return `
 function publicProperties(){
 
 return properties.filter(
-
 p=>getStatus(p)==="approved"
-
 );
 
 }
@@ -1753,9 +2188,7 @@ p=>getStatus(p)==="approved"
 function pendingProperties(){
 
 return properties.filter(
-
 p=>getStatus(p)==="pending"
-
 );
 
 }
@@ -1764,9 +2197,7 @@ p=>getStatus(p)==="pending"
 function rejectedProperties(){
 
 return properties.filter(
-
 p=>getStatus(p)==="rejected"
-
 );
 
 }
@@ -1812,21 +2243,9 @@ return;
 
 }
 
-
 const lat=Number(p.lat);
 
 const lng=Number(p.lng);
-
-
-/*
-Google Maps Street View URL.
-
-If Street View is available at this location,
-Google will open the panorama.
-
-Otherwise Google Maps may show the nearest
-available Street View/location.
-*/
 
 const url=
 "https://www.google.com/maps/@?api=1&map_action=pano"+
@@ -1835,7 +2254,6 @@ encodeURIComponent(lat+","+lng)+
 "&heading=0"+
 "&pitch=0"+
 "&fov=80";
-
 
 window.open(
 url,
@@ -1863,11 +2281,9 @@ return null;
 
 }
 
-
 const lat=Number(p.lat);
 
 const lng=Number(p.lng);
-
 
 if(
 isNaN(lat) ||
@@ -1878,9 +2294,7 @@ return null;
 
 }
 
-
 const size=hi?20:16;
-
 
 const icon=L.divIcon({
 
@@ -1909,7 +2323,6 @@ size/2
 
 });
 
-
 const m=L.marker(
 [lat,lng],
 {
@@ -1918,21 +2331,17 @@ riseOnHover:true
 }
 );
 
-
 const mobile=
 String(p.mobile || "")
 .replace(/\D/g,"");
-
 
 const waNumber=
 mobile.length===10
 ? "91"+mobile
 : mobile;
 
-
 const title=
 esc(p.title || "Property");
-
 
 const streetButton=`
 
@@ -1946,7 +2355,6 @@ onclick="window.openStreetView('${esc(p.id)}')">
 
 `;
 
-
 const popup=`
 
 <div>
@@ -1958,7 +2366,6 @@ ${title}
 <div>
 ${statusBadge(getStatus(p))}
 </div>
-
 
 <div class="popupMeta">
 
@@ -1997,7 +2404,6 @@ ${esc(p.owner || "-")}
 
 </div>
 
-
 <div class="popupButtons">
 
 <a
@@ -2007,7 +2413,6 @@ href="tel:${esc(mobile)}">
 📞 Call
 
 </a>
-
 
 <a
 class="waBtn"
@@ -2019,15 +2424,14 @@ href="https://wa.me/${esc(waNumber)}">
 
 </a>
 
-
 <a
 class="enqBtn"
 href="mailto:sachinbc77@gmail.com?subject=Property Enquiry - ${encodeURIComponent(p.title || "Property")}&body=${encodeURIComponent(
-"I am interested in this property.\\n\\nProperty: "+
+"I am interested in this property.\n\nProperty: "+
 (p.title||"")+
-"\\nArea: "+
+"\nArea: "+
 (p.area||"")+
-"\\nPrice: "+
+"\nPrice: "+
 (p.price||"")
 )}">
 
@@ -2035,9 +2439,7 @@ href="mailto:sachinbc77@gmail.com?subject=Property Enquiry - ${encodeURIComponen
 
 </a>
 
-
 ${streetButton}
-
 
 <button
 class="editBtn"
@@ -2046,7 +2448,6 @@ onclick="window.editProperty('${esc(p.id)}')">
 ✎ Edit
 
 </button>
-
 
 <button
 class="deleteBtn"
@@ -2062,12 +2463,9 @@ onclick="window.deleteProperty('${esc(p.id)}')">
 
 `;
 
-
 m.bindPopup(popup);
 
-
 propertyMarkerMap[p.id]=m;
-
 
 return m;
 
@@ -2084,7 +2482,6 @@ propertyLayer.clearLayers();
 
 propertyMarkerMap={};
 
-
 if(propertyHighlightLayer){
 
 map.removeLayer(
@@ -2095,10 +2492,8 @@ propertyHighlightLayer=null;
 
 }
 
-
 const publicList=
 publicProperties();
-
 
 publicList.forEach(p=>{
 
@@ -2112,14 +2507,32 @@ m.addTo(propertyLayer);
 
 });
 
-
 updateAdminCount();
 
 }
 
 
 /* =====================================================
-HIGHLIGHT
+LOAD LAND PARCELS
+===================================================== */
+
+function loadLandParcels(){
+
+landParcelLayer.clearLayers();
+
+landMarkerLayers={};
+
+landParcels.forEach(parcel=>{
+
+drawSavedLandParcel(parcel);
+
+});
+
+}
+
+
+/* =====================================================
+HIGHLIGHT PROPERTY
 ===================================================== */
 
 function highlight(p){
@@ -2133,7 +2546,6 @@ return;
 
 }
 
-
 if(propertyHighlightLayer){
 
 map.removeLayer(
@@ -2143,7 +2555,6 @@ propertyHighlightLayer
 propertyHighlightLayer=null;
 
 }
-
 
 propertyHighlightLayer=
 L.circleMarker(
@@ -2162,11 +2573,6 @@ fillOpacity:.12
 
 ).addTo(map);
 
-
-/*
-Enhanced property zoom.
-*/
-
 map.flyTo(
 [
 Number(p.lat),
@@ -2178,10 +2584,8 @@ duration:0.8
 }
 );
 
-
 const m=
 propertyMarkerMap[p.id];
-
 
 if(m){
 
@@ -2207,12 +2611,10 @@ document.getElementById(
 "propertyType"
 ).value;
 
-
 const sub=
 document.getElementById(
 "propertySubCategory"
 ).value;
-
 
 const area=
 document.getElementById(
@@ -2221,14 +2623,12 @@ document.getElementById(
 .trim()
 .toLowerCase();
 
-
 const keyword=
 document.getElementById(
 "propertyKeyword"
 ).value
 .trim()
 .toLowerCase();
-
 
 const list=
 publicProperties().filter(p=>{
@@ -2237,18 +2637,15 @@ const typeMatch=
 type==="all" ||
 p.type===type;
 
-
 const subMatch=
 sub==="all" ||
 p.subCategory===sub;
-
 
 const areaMatch=
 !area ||
 String(p.area||"")
 .toLowerCase()
 .includes(area);
-
 
 const text=[
 
@@ -2267,20 +2664,23 @@ subText(p.subCategory)
 .join(" ")
 .toLowerCase();
 
-
 const keywordMatch=
 !keyword ||
 text.includes(keyword);
 
 
-return
-typeMatch &&
+/*
+IMPORTANT:
+return must remain on the same
+logical JavaScript statement.
+*/
+
+return typeMatch &&
 subMatch &&
 areaMatch &&
 keywordMatch;
 
 });
-
 
 showPropertyResults(list);
 
@@ -2297,7 +2697,6 @@ const box=
 document.getElementById(
 "propertyResults"
 );
-
 
 if(!list.length){
 
@@ -2322,7 +2721,6 @@ return;
 
 }
 
-
 box.innerHTML=`
 
 <div class="resultHeader">
@@ -2333,15 +2731,12 @@ ${list.length} approved property(s) found
 
 `;
 
-
 list.forEach(p=>{
 
 const div=
 document.createElement("div");
 
-
 div.className="resultCard";
-
 
 div.innerHTML=`
 
@@ -2373,13 +2768,11 @@ ${esc(subText(p.subCategory))}
 
 `;
 
-
 div.onclick=function(){
 
 highlight(p);
 
 };
-
 
 box.appendChild(div);
 
@@ -2398,25 +2791,20 @@ document.getElementById(
 "propertyType"
 ).value="all";
 
-
 document.getElementById(
 "propertySubCategory"
 ).value="all";
-
 
 document.getElementById(
 "propertyArea"
 ).value="";
 
-
 document.getElementById(
 "propertyKeyword"
 ).value="";
 
-
 const list=
 publicProperties();
-
 
 document.getElementById(
 "propertyResults"
@@ -2450,12 +2838,10 @@ document.getElementById(
 "layoutStatus"
 ).value;
 
-
 const type=
 document.getElementById(
 "layoutType"
 ).value;
-
 
 const area=
 document.getElementById(
@@ -2464,14 +2850,12 @@ document.getElementById(
 .trim()
 .toLowerCase();
 
-
 const keyword=
 document.getElementById(
 "layoutKeyword"
 ).value
 .trim()
 .toLowerCase();
-
 
 const list=
 layouts.filter(l=>{
@@ -2480,11 +2864,9 @@ const statusMatch=
 status==="all" ||
 l.status===status;
 
-
 const typeMatch=
 type==="all" ||
 l.type===type;
-
 
 const areaMatch=
 !area ||
@@ -2492,31 +2874,30 @@ String(l.area||"")
 .toLowerCase()
 .includes(area);
 
-
 const text=
 JSON.stringify(l)
 .toLowerCase();
-
 
 const keywordMatch=
 !keyword ||
 text.includes(keyword);
 
 
-return
-statusMatch &&
+/*
+Fixed ASI return issue.
+*/
+
+return statusMatch &&
 typeMatch &&
 areaMatch &&
 keywordMatch;
 
 });
 
-
 const box=
 document.getElementById(
 "layoutResults"
 );
-
 
 if(!list.length){
 
@@ -2539,7 +2920,6 @@ No layout data available yet.
 return;
 
 }
-
 
 box.innerHTML=
 list.map(l=>`
@@ -2582,21 +2962,17 @@ document.getElementById(
 "layoutStatus"
 ).value="all";
 
-
 document.getElementById(
 "layoutType"
 ).value="all";
-
 
 document.getElementById(
 "layoutArea"
 ).value="";
 
-
 document.getElementById(
 "layoutKeyword"
 ).value="";
-
 
 document.getElementById(
 "layoutResults"
@@ -2632,7 +3008,6 @@ document.getElementById(
 ).value
 );
 
-
 const rate=
 parseFloat(
 document.getElementById(
@@ -2640,12 +3015,10 @@ document.getElementById(
 ).value
 );
 
-
 const box=
 document.getElementById(
 "costResult"
 );
-
 
 if(
 isNaN(area) ||
@@ -2661,10 +3034,8 @@ return;
 
 }
 
-
 const total=
 area*rate;
-
 
 box.innerHTML=`
 
@@ -2703,7 +3074,6 @@ bufferLayer
 
 }
 
-
 if(type==="urban"){
 
 if(
@@ -2723,7 +3093,6 @@ urbanLayer
 }
 
 }
-
 
 if(type==="properties"){
 
@@ -2745,6 +3114,13 @@ propertyLayer
 
 }
 
+
+/*
+Land parcel layer is always available
+for the GIS database. Its visibility can
+be controlled in future phases.
+*/
+
 }
 
 
@@ -2758,18 +3134,15 @@ editingPropertyId=null;
 
 clearForm();
 
-
 document.getElementById(
 "propertyModalTitle"
 ).textContent=
 "Post Your Property";
 
-
 document.getElementById(
 "cancelEditButton"
 ).style.display=
 "none";
-
 
 openModal(
 "propertyModal"
@@ -2789,7 +3162,6 @@ document.getElementById(
 ).style.display=
 "block";
 
-
 document.getElementById(
 id
 ).style.display=
@@ -2805,11 +3177,27 @@ document.getElementById(
 ).style.display=
 "none";
 
+if(
+document.getElementById(
+"landModal"
+).style.display!=="block" &&
+document.getElementById(
+"landDetailsModal"
+).style.display!=="block" &&
+document.getElementById(
+"landListModal"
+).style.display!=="block" &&
+document.getElementById(
+"adminPanel"
+).style.display!=="block"
+){
 
 document.getElementById(
 "overlay"
 ).style.display=
 "none";
+
+}
 
 }
 
@@ -2819,6 +3207,12 @@ function closeAllModals(){
 closePropertyModal();
 
 closeAdminPanel();
+
+closeLandModal();
+
+closeLandDetails();
+
+closeLandList();
 
 }
 
@@ -2831,11 +3225,9 @@ function startLocationSelection(){
 
 closePropertyModal();
 
-
 alert(
 "Map par property location par click karein."
 );
-
 
 if(locationPicker){
 
@@ -2845,7 +3237,6 @@ locationPicker
 );
 
 }
-
 
 locationPicker=function(e){
 
@@ -2857,7 +3248,6 @@ lng:e.latlng.lng
 
 };
 
-
 document.getElementById(
 "locationStatus"
 ).textContent=
@@ -2867,22 +3257,18 @@ e.latlng.lat.toFixed(6)+
 ", "+
 e.latlng.lng.toFixed(6);
 
-
 map.off(
 "click",
 locationPicker
 );
 
-
 locationPicker=null;
-
 
 openModal(
 "propertyModal"
 );
 
 };
-
 
 map.on(
 "click",
@@ -2903,64 +3289,53 @@ document.getElementById(
 "postOwner"
 ).value.trim();
 
-
 const mobile=
 document.getElementById(
 "postMobile"
 ).value.trim();
-
 
 const type=
 document.getElementById(
 "postType"
 ).value;
 
-
 const subCategory=
 document.getElementById(
 "postSubCategory"
 ).value;
-
 
 const area=
 document.getElementById(
 "postArea"
 ).value.trim();
 
-
 const propertyArea=
 document.getElementById(
 "postPropertyArea"
 ).value.trim();
-
 
 const price=
 document.getElementById(
 "postPrice"
 ).value.trim();
 
-
 const road=
 document.getElementById(
 "postRoad"
 ).value.trim();
-
 
 const title=
 document.getElementById(
 "postTitle"
 ).value.trim();
 
-
 const description=
 document.getElementById(
 "postDescription"
 ).value.trim();
 
-
 const cleanMobile=
 mobile.replace(/\D/g,"");
-
 
 if(!owner){
 
@@ -2972,7 +3347,6 @@ return;
 
 }
 
-
 if(cleanMobile.length<10){
 
 alert(
@@ -2982,7 +3356,6 @@ alert(
 return;
 
 }
-
 
 if(!area){
 
@@ -2994,7 +3367,6 @@ return;
 
 }
 
-
 if(!price){
 
 alert(
@@ -3005,7 +3377,6 @@ return;
 
 }
 
-
 if(!title){
 
 alert(
@@ -3015,7 +3386,6 @@ alert(
 return;
 
 }
-
 
 if(!selectedLocation){
 
@@ -3037,7 +3407,6 @@ properties.findIndex(
 p=>p.id===editingPropertyId
 );
 
-
 if(index===-1){
 
 alert(
@@ -3047,7 +3416,6 @@ alert(
 return;
 
 }
-
 
 properties[index]={
 
@@ -3077,18 +3445,12 @@ lat:selectedLocation.lat,
 
 lng:selectedLocation.lng,
 
-/*
-Editing published property sends
-it back to approval.
-*/
-
 status:"pending",
 
 updatedAt:
 new Date().toISOString()
 
 };
-
 
 saveProperties();
 
@@ -3100,12 +3462,10 @@ closePropertyModal();
 
 clearPropertySearch();
 
-
 alert(
 "Property updated successfully.\n\n"+
 "Status: Pending approval."
 );
-
 
 return;
 
@@ -3159,7 +3519,6 @@ new Date().toISOString()
 
 };
 
-
 properties.push(p);
 
 saveProperties();
@@ -3171,7 +3530,6 @@ clearForm();
 closePropertyModal();
 
 clearPropertySearch();
-
 
 alert(
 "Property submitted successfully.\n\n"+
@@ -3193,7 +3551,6 @@ properties.find(
 x=>x.id===id
 );
 
-
 if(!p){
 
 alert(
@@ -3204,33 +3561,27 @@ return;
 
 }
 
-
 editingPropertyId=id;
-
 
 document.getElementById(
 "propertyModalTitle"
 ).textContent=
 "Edit Property";
 
-
 document.getElementById(
 "postOwner"
 ).value=
 p.owner || "";
-
 
 document.getElementById(
 "postMobile"
 ).value=
 p.mobile || "";
 
-
 document.getElementById(
 "postType"
 ).value=
 p.type || "sale";
-
 
 document.getElementById(
 "postSubCategory"
@@ -3238,42 +3589,35 @@ document.getElementById(
 p.subCategory ||
 "residential_plot";
 
-
 document.getElementById(
 "postArea"
 ).value=
 p.area || "";
-
 
 document.getElementById(
 "postPropertyArea"
 ).value=
 p.propertyArea || "";
 
-
 document.getElementById(
 "postPrice"
 ).value=
 p.price || "";
-
 
 document.getElementById(
 "postRoad"
 ).value=
 p.road || "";
 
-
 document.getElementById(
 "postTitle"
 ).value=
 p.title || "";
 
-
 document.getElementById(
 "postDescription"
 ).value=
 p.description || "";
-
 
 selectedLocation={
 
@@ -3282,7 +3626,6 @@ lat:Number(p.lat),
 lng:Number(p.lng)
 
 };
-
 
 document.getElementById(
 "locationStatus"
@@ -3293,12 +3636,10 @@ Number(p.lat).toFixed(6)+
 ", "+
 Number(p.lng).toFixed(6);
 
-
 document.getElementById(
 "cancelEditButton"
 ).style.display=
 "inline-block";
-
 
 openModal(
 "propertyModal"
@@ -3308,7 +3649,7 @@ openModal(
 
 
 /* =====================================================
-DELETE PROPERTY - FIXED
+DELETE PROPERTY
 ===================================================== */
 
 function deleteProperty(id){
@@ -3317,7 +3658,6 @@ const p=
 properties.find(
 x=>String(x.id)===String(id)
 );
-
 
 if(!p){
 
@@ -3329,10 +3669,8 @@ return;
 
 }
 
-
 const title=
 p.title || "Property";
-
 
 const ok=
 confirm(
@@ -3341,21 +3679,14 @@ title+
 "\n\nThis action cannot be undone."
 );
 
-
 if(!ok){
 
 return;
 
 }
 
-
-/*
-1. Remove marker immediately.
-*/
-
 const existingMarker=
 propertyMarkerMap[id];
-
 
 if(existingMarker){
 
@@ -3377,11 +3708,6 @@ existingMarker.closePopup();
 
 }
 
-
-/*
-2. Remove highlight.
-*/
-
 if(propertyHighlightLayer){
 
 map.removeLayer(
@@ -3392,41 +3718,16 @@ propertyHighlightLayer=null;
 
 }
 
-
-/*
-3. Remove from array.
-*/
-
 properties=
 properties.filter(
 x=>String(x.id)!==String(id)
 );
 
-
-/*
-4. Save.
-*/
-
 saveProperties();
-
-
-/*
-5. Rebuild map markers.
-*/
 
 load();
 
-
-/*
-6. Refresh search.
-*/
-
 clearPropertySearch();
-
-
-/*
-7. Refresh admin panel if open.
-*/
 
 if(
 document.getElementById(
@@ -3438,20 +3739,11 @@ renderAdminPanel();
 
 }
 
-
 alert(
 "Property deleted successfully."
 );
 
 }
-
-
-/*
-Make function explicitly global.
-
-This is important for Leaflet popup
-inline button onclick.
-*/
 
 window.deleteProperty=
 deleteProperty;
@@ -3488,66 +3780,53 @@ document.getElementById(
 "postOwner"
 ).value="";
 
-
 document.getElementById(
 "postMobile"
 ).value="";
 
-
 document.getElementById(
 "postType"
 ).value="sale";
-
 
 document.getElementById(
 "postSubCategory"
 ).value=
 "residential_plot";
 
-
 document.getElementById(
 "postArea"
 ).value="";
-
 
 document.getElementById(
 "postPropertyArea"
 ).value="";
 
-
 document.getElementById(
 "postPrice"
 ).value="";
-
 
 document.getElementById(
 "postRoad"
 ).value="";
 
-
 document.getElementById(
 "postTitle"
 ).value="";
-
 
 document.getElementById(
 "postDescription"
 ).value="";
 
-
 document.getElementById(
 "postPhotos"
 ).value="";
 
-
 selectedLocation=null;
-
 
 document.getElementById(
 "locationStatus"
 ).textContent=
 "Location not selected.";
-
 
 editingPropertyId=null;
 
@@ -3555,7 +3834,7 @@ editingPropertyId=null;
 
 
 /* =====================================================
-SAVE
+SAVE PROPERTIES
 ===================================================== */
 
 function saveProperties(){
@@ -3584,7 +3863,7 @@ alert(
 
 
 /* =====================================================
-LOAD
+LOAD PROPERTIES
 ===================================================== */
 
 function loadStoredProperties(){
@@ -3596,12 +3875,10 @@ localStorage.getItem(
 STORAGE_KEY
 );
 
-
 if(raw){
 
 const data=
 JSON.parse(raw);
-
 
 if(Array.isArray(data)){
 
@@ -3641,12 +3918,10 @@ function openAdminPanel(){
 
 renderAdminPanel();
 
-
 document.getElementById(
 "overlay"
 ).style.display=
 "block";
-
 
 document.getElementById(
 "adminPanel"
@@ -3663,10 +3938,18 @@ document.getElementById(
 ).style.display=
 "none";
 
-
 if(
 document.getElementById(
 "propertyModal"
+).style.display!=="block" &&
+document.getElementById(
+"landModal"
+).style.display!=="block" &&
+document.getElementById(
+"landDetailsModal"
+).style.display!=="block" &&
+document.getElementById(
+"landListModal"
 ).style.display!=="block"
 ){
 
@@ -3689,12 +3972,10 @@ function updateAdminCount(){
 const count=
 pendingProperties().length;
 
-
 const badge=
 document.getElementById(
 "adminPendingCount"
 );
-
 
 if(!badge){
 
@@ -3702,9 +3983,7 @@ return;
 
 }
 
-
 badge.textContent=count;
-
 
 badge.style.display=
 count>0
@@ -3725,7 +4004,6 @@ document.getElementById(
 "adminResults"
 );
 
-
 const pending=
 pendingProperties();
 
@@ -3734,7 +4012,6 @@ rejectedProperties();
 
 const published=
 publicProperties();
-
 
 if(
 !pending.length &&
@@ -3761,7 +4038,6 @@ return;
 
 }
 
-
 let html="";
 
 
@@ -3784,7 +4060,6 @@ margin-bottom:8px;
 </div>
 
 `;
-
 
 pending.forEach(p=>{
 
@@ -3818,7 +4093,6 @@ margin:15px 0 8px;
 
 `;
 
-
 published.forEach(p=>{
 
 html+=adminCardHTML(
@@ -3851,7 +4125,6 @@ margin:15px 0 8px;
 
 `;
 
-
 rejected.forEach(p=>{
 
 html+=adminCardHTML(
@@ -3862,7 +4135,6 @@ p,
 });
 
 }
-
 
 box.innerHTML=html;
 
@@ -3885,13 +4157,11 @@ ${esc(p.title || "Property")}
 
 </div>
 
-
 <div style="margin-top:3px">
 
 ${statusBadge(status)}
 
 </div>
-
 
 <div class="adminCardMeta">
 
@@ -3940,7 +4210,6 @@ ${esc(p.description || "-")}
 
 </div>
 
-
 <div class="adminButtons">
 
 ${
@@ -3957,7 +4226,6 @@ onclick="approveProperty('${esc(p.id)}')">
 
 </button>
 
-
 <button
 class="btnRed"
 onclick="rejectProperty('${esc(p.id)}')">
@@ -3972,7 +4240,6 @@ onclick="rejectProperty('${esc(p.id)}')">
 
 }
 
-
 <button
 class="btnOrange"
 onclick="adminEditProperty('${esc(p.id)}')">
@@ -3981,7 +4248,6 @@ onclick="adminEditProperty('${esc(p.id)}')">
 
 </button>
 
-
 <button
 class="btnRed"
 onclick="deletePropertyFromAdmin('${esc(p.id)}')">
@@ -3989,7 +4255,6 @@ onclick="deletePropertyFromAdmin('${esc(p.id)}')">
 🗑 Delete
 
 </button>
-
 
 ${
 status==="rejected"
@@ -4031,13 +4296,11 @@ properties.find(
 x=>String(x.id)===String(id)
 );
 
-
 if(!p){
 
 return;
 
 }
-
 
 const ok=
 confirm(
@@ -4045,19 +4308,16 @@ confirm(
 (p.title || "Property")
 );
 
-
 if(!ok){
 
 return;
 
 }
 
-
 p.status="approved";
 
 p.approvedAt=
 new Date().toISOString();
-
 
 saveProperties();
 
@@ -4066,7 +4326,6 @@ load();
 renderAdminPanel();
 
 clearPropertySearch();
-
 
 alert(
 "Property approved successfully.\n\n"+
@@ -4087,13 +4346,11 @@ properties.find(
 x=>String(x.id)===String(id)
 );
 
-
 if(!p){
 
 return;
 
 }
-
 
 const ok=
 confirm(
@@ -4101,19 +4358,16 @@ confirm(
 (p.title || "Property")
 );
 
-
 if(!ok){
 
 return;
 
 }
 
-
 p.status="rejected";
 
 p.rejectedAt=
 new Date().toISOString();
-
 
 saveProperties();
 
@@ -4122,7 +4376,6 @@ load();
 renderAdminPanel();
 
 clearPropertySearch();
-
 
 alert(
 "Property rejected."
@@ -4145,7 +4398,7 @@ editProperty(id);
 
 
 /* =====================================================
-ADMIN DELETE - FIXED
+ADMIN DELETE
 ===================================================== */
 
 function deletePropertyFromAdmin(id){
@@ -4154,7 +4407,6 @@ const p=
 properties.find(
 x=>String(x.id)===String(id)
 );
-
 
 if(!p){
 
@@ -4166,7 +4418,6 @@ return;
 
 }
 
-
 const ok=
 confirm(
 "Delete this property permanently?\n\n"+
@@ -4174,21 +4425,14 @@ confirm(
 "\n\nThis action cannot be undone."
 );
 
-
 if(!ok){
 
 return;
 
 }
 
-
-/*
-Remove marker first.
-*/
-
 const m=
 propertyMarkerMap[id];
-
 
 if(m){
 
@@ -4208,20 +4452,10 @@ propertyLayer.removeLayer(m);
 
 }
 
-
-/*
-Remove property.
-*/
-
 properties=
 properties.filter(
 x=>String(x.id)!==String(id)
 );
-
-
-/*
-Save + reload.
-*/
 
 saveProperties();
 
@@ -4230,7 +4464,6 @@ load();
 clearPropertySearch();
 
 renderAdminPanel();
-
 
 alert(
 "Property deleted successfully."
@@ -4250,9 +4483,7 @@ document.getElementById(
 "areaList"
 );
 
-
 list.innerHTML="";
-
 
 nagpurAreas.forEach(area=>{
 
@@ -4271,7 +4502,2020 @@ list.appendChild(option);
 
 
 /* =====================================================
-ESCAPE LOCATION PICKER
+LAND DEMARCATION - STORAGE
+===================================================== */
+
+function saveLandData(){
+
+try{
+
+localStorage.setItem(
+LAND_STORAGE_KEY,
+JSON.stringify(landParcels)
+);
+
+}catch(e){
+
+console.error(
+"Land parcel save failed",
+e
+);
+
+alert(
+"Land parcel data could not be saved."
+);
+
+}
+
+}
+
+
+function loadLandData(){
+
+try{
+
+const raw=
+localStorage.getItem(
+LAND_STORAGE_KEY
+);
+
+if(raw){
+
+const data=
+JSON.parse(raw);
+
+if(Array.isArray(data)){
+
+landParcels=data;
+
+}
+
+}
+
+}catch(e){
+
+console.error(
+"Land parcel load failed",
+e
+);
+
+landParcels=[];
+
+}
+
+}
+
+
+/* =====================================================
+LAND AREA CALCULATION
+===================================================== */
+
+/*
+Spherical polygon area calculation.
+Result is returned in square metres.
+
+This is suitable for normal cadastral/
+land-demarcation web visualization.
+
+For legal survey output, authoritative
+survey coordinates and professional survey
+software should be used.
+*/
+
+function calculatePolygonArea(latlngs){
+
+if(!latlngs || latlngs.length<3){
+
+return 0;
+
+}
+
+const R=6378137;
+
+let area=0;
+
+for(
+let i=0;
+i<latlngs.length;
+i++
+){
+
+const p1=latlngs[i];
+
+const p2=
+latlngs[(i+1)%latlngs.length];
+
+const lon1=
+p1.lng*Math.PI/180;
+
+const lon2=
+p2.lng*Math.PI/180;
+
+const lat1=
+p1.lat*Math.PI/180;
+
+const lat2=
+p2.lat*Math.PI/180;
+
+area +=
+(lon2-lon1) *
+(
+2+
+Math.sin(lat1)+
+Math.sin(lat2)
+);
+
+}
+
+area=
+Math.abs(area)*
+R*
+R/2;
+
+return area;
+
+}
+
+
+/* =====================================================
+LAND PERIMETER
+===================================================== */
+
+function calculatePolygonPerimeter(latlngs){
+
+if(!latlngs || latlngs.length<2){
+
+return 0;
+
+}
+
+let perimeter=0;
+
+for(
+let i=0;
+i<latlngs.length;
+i++
+){
+
+const p1=latlngs[i];
+
+const p2=
+latlngs[(i+1)%latlngs.length];
+
+perimeter +=
+L.latLng(
+p1.lat,
+p1.lng
+).distanceTo(
+L.latLng(
+p2.lat,
+p2.lng
+)
+);
+
+}
+
+return perimeter;
+
+}
+
+
+/* =====================================================
+LAND FORM RESET
+===================================================== */
+
+function clearLandForm(){
+
+document.getElementById(
+"landId"
+).value="";
+
+document.getElementById(
+"landSurveyNo"
+).value="";
+
+document.getElementById(
+"landVillage"
+).value="";
+
+document.getElementById(
+"landTaluka"
+).value="";
+
+document.getElementById(
+"landDistrict"
+).value="Nagpur";
+
+document.getElementById(
+"landUse"
+).value="Agricultural";
+
+document.getElementById(
+"landStatus"
+).value="Surveyed";
+
+document.getElementById(
+"landSurveyMethod"
+).value="DGPS";
+
+document.getElementById(
+"landDate"
+).value=
+new Date().toISOString().slice(0,10);
+
+document.getElementById(
+"landOwnerRef"
+).value="";
+
+document.getElementById(
+"landRemarks"
+).value="";
+
+document.getElementById(
+"landDrawStatus"
+).textContent=
+"No polygon drawn.";
+
+document.getElementById(
+"landCalculated"
+).innerHTML=
+"Area: Not calculated<br>Perimeter: Not calculated";
+
+}
+
+
+/* =====================================================
+OPEN LAND DEMARCATION
+===================================================== */
+
+function openLandDemarcation(){
+
+editingLandId=null;
+
+clearLandDrawing();
+
+clearLandForm();
+
+document.getElementById(
+"landModalTitle"
+).textContent=
+"📐 Land Demarcation";
+
+openModal(
+"landModal"
+);
+
+}
+
+
+/* =====================================================
+LAND DRAWING START
+===================================================== */
+
+function startLandDrawing(){
+
+/*
+If drawing was already active, do not
+create another click listener.
+*/
+
+if(landDrawing){
+
+alert(
+"Polygon drawing is already active.\n\n"+
+"Click points on the map and press Finish."
+);
+
+return;
+
+}
+
+landDrawing=true;
+
+landDrawPoints=[];
+
+clearLandTempLayers();
+
+document.getElementById(
+"landDrawStatus"
+).textContent=
+"Drawing active: click 3 or more points on the map.";
+
+
+/*
+Close the modal temporarily so the map
+can be used comfortably.
+*/
+
+document.getElementById(
+"landModal"
+).style.display=
+"none";
+
+
+document.getElementById(
+"overlay"
+).style.display=
+"none";
+
+
+map.getContainer().style.cursor=
+"crosshair";
+
+
+map.on(
+"click",
+landMapClick
+);
+
+}
+
+
+/* =====================================================
+LAND MAP CLICK
+===================================================== */
+
+function landMapClick(e){
+
+if(!landDrawing){
+
+return;
+
+}
+
+const point={
+lat:e.latlng.lat,
+lng:e.latlng.lng
+};
+
+landDrawPoints.push(point);
+
+const vertex=
+L.circleMarker(
+[
+point.lat,
+point.lng
+],
+{
+radius:5,
+color:"#dc3545",
+weight:2,
+fillColor:"#dc3545",
+fillOpacity:1
+}
+).addTo(map);
+
+landTempMarkers.push(vertex);
+
+
+/*
+Update temporary geometry.
+*/
+
+const latlngs=
+landDrawPoints.map(
+p=>[
+p.lat,
+p.lng
+]
+);
+
+
+if(landTempLine){
+
+map.removeLayer(
+landTempLine
+);
+
+landTempLine=null;
+
+}
+
+if(
+landDrawPoints.length>=2
+){
+
+landTempLine=
+L.polyline(
+latlngs,
+{
+color:"#087f8c",
+weight:3,
+dashArray:"6 5"
+}
+).addTo(map);
+
+}
+
+
+if(
+landDrawPoints.length>=3
+){
+
+if(landTempPolygon){
+
+map.removeLayer(
+landTempPolygon
+);
+
+}
+
+landTempPolygon=
+L.polygon(
+latlngs,
+{
+color:"#087f8c",
+weight:3,
+fillColor:"#087f8c",
+fillOpacity:.15,
+dashArray:"6 4"
+}
+).addTo(map);
+
+const area=
+calculatePolygonArea(
+landDrawPoints
+);
+
+const perimeter=
+calculatePolygonPerimeter(
+landDrawPoints
+);
+
+document.getElementById(
+"landDrawStatus"
+).textContent=
+landDrawPoints.length+
+" vertices captured.";
+
+document.getElementById(
+"landCalculated"
+).innerHTML=
+"Area: <b>"+
+formatArea(area)+
+"</b><br>"+
+"Perimeter: <b>"+
+formatDistance(perimeter)+
+"</b>";
+
+}else{
+
+document.getElementById(
+"landDrawStatus"
+).textContent=
+landDrawPoints.length+
+" point(s) captured. Minimum 3 points required.";
+
+}
+
+}
+
+
+/* =====================================================
+LAND FINISH DRAWING
+===================================================== */
+
+function finishLandDrawing(){
+
+if(
+landDrawPoints.length<3
+){
+
+alert(
+"At least 3 points are required to create a land polygon."
+);
+
+return;
+
+}
+
+landDrawing=false;
+
+map.off(
+"click",
+landMapClick
+);
+
+map.getContainer().style.cursor="";
+
+if(landTempLine){
+
+map.removeLayer(
+landTempLine
+);
+
+landTempLine=null;
+
+}
+
+if(landTempPolygon){
+
+map.removeLayer(
+landTempPolygon
+);
+
+landTempPolygon=null;
+
+}
+
+const area=
+calculatePolygonArea(
+landDrawPoints
+);
+
+const perimeter=
+calculatePolygonPerimeter(
+landDrawPoints
+);
+
+document.getElementById(
+"landDrawStatus"
+).textContent=
+"Polygon completed: "+
+landDrawPoints.length+
+" vertices.";
+
+document.getElementById(
+"landCalculated"
+).innerHTML=
+"Area: <b>"+
+formatArea(area)+
+"</b><br>"+
+"Perimeter: <b>"+
+formatDistance(perimeter)+
+"</b>";
+
+openModal(
+"landModal"
+);
+
+}
+
+
+/* =====================================================
+CANCEL LAND DRAWING
+===================================================== */
+
+function cancelLandDrawing(){
+
+landDrawing=false;
+
+map.off(
+"click",
+landMapClick
+);
+
+map.getContainer().style.cursor="";
+
+landDrawPoints=[];
+
+clearLandTempLayers();
+
+document.getElementById(
+"landDrawStatus"
+).textContent=
+"Drawing cancelled.";
+
+}
+
+
+/* =====================================================
+CLEAR TEMP LAND LAYERS
+===================================================== */
+
+function clearLandTempLayers(){
+
+if(landTempLine){
+
+map.removeLayer(
+landTempLine
+);
+
+landTempLine=null;
+
+}
+
+if(landTempPolygon){
+
+map.removeLayer(
+landTempPolygon
+);
+
+landTempPolygon=null;
+
+}
+
+landTempMarkers.forEach(
+m=>{
+
+try{
+
+map.removeLayer(m);
+
+}catch(e){}
+
+}
+);
+
+landTempMarkers=[];
+
+}
+
+
+/* =====================================================
+CLEAR LAND DRAWING
+===================================================== */
+
+function clearLandDrawing(){
+
+landDrawing=false;
+
+map.off(
+"click",
+landMapClick
+);
+
+map.getContainer().style.cursor="";
+
+landDrawPoints=[];
+
+clearLandTempLayers();
+
+}
+
+
+/* =====================================================
+FORMAT AREA
+===================================================== */
+
+function formatArea(area){
+
+if(!isFinite(area)){
+
+return "-";
+
+}
+
+const hectare=
+area/10000;
+
+const acre=
+area/4046.8564224;
+
+return (
+area.toLocaleString(
+"en-IN",
+{
+maximumFractionDigits:2
+}
+)+
+" m² ("+
+hectare.toLocaleString(
+"en-IN",
+{
+maximumFractionDigits:4
+}
+)+
+" ha / "+
+acre.toLocaleString(
+"en-IN",
+{
+maximumFractionDigits:4
+}
+)+
+" acre)"
+);
+
+}
+
+
+/* =====================================================
+FORMAT DISTANCE
+===================================================== */
+
+function formatDistance(meters){
+
+if(!isFinite(meters)){
+
+return "-";
+
+}
+
+if(meters>=1000){
+
+return (
+(meters/1000).toLocaleString(
+"en-IN",
+{
+maximumFractionDigits:3
+}
+)+
+" km"
+);
+
+}
+
+return (
+meters.toLocaleString(
+"en-IN",
+{
+maximumFractionDigits:2
+}
+)+
+" m"
+);
+
+}
+
+
+/* =====================================================
+SAVE LAND PARCEL
+===================================================== */
+
+function saveLandParcel(){
+
+const landId=
+document.getElementById(
+"landId"
+).value.trim();
+
+const surveyNo=
+document.getElementById(
+"landSurveyNo"
+).value.trim();
+
+const village=
+document.getElementById(
+"landVillage"
+).value.trim();
+
+const taluka=
+document.getElementById(
+"landTaluka"
+).value.trim();
+
+const district=
+document.getElementById(
+"landDistrict"
+).value.trim();
+
+const landUse=
+document.getElementById(
+"landUse"
+).value;
+
+const status=
+document.getElementById(
+"landStatus"
+).value;
+
+const surveyMethod=
+document.getElementById(
+"landSurveyMethod"
+).value;
+
+const demarcationDate=
+document.getElementById(
+"landDate"
+).value;
+
+const ownerRef=
+document.getElementById(
+"landOwnerRef"
+).value.trim();
+
+const remarks=
+document.getElementById(
+"landRemarks"
+).value.trim();
+
+
+if(!landId){
+
+alert(
+"Please enter Land ID."
+);
+
+return;
+
+}
+
+
+/*
+When editing, use existing geometry
+if the user did not redraw it.
+*/
+
+let geometry=
+landDrawPoints.map(
+p=>({
+lat:Number(p.lat),
+lng:Number(p.lng)
+})
+);
+
+
+if(
+!geometry.length &&
+editingLandId
+){
+
+const oldParcel=
+landParcels.find(
+p=>p.id===editingLandId
+);
+
+if(oldParcel){
+
+geometry=
+oldParcel.geometry || [];
+
+}
+
+}
+
+
+if(geometry.length<3){
+
+alert(
+"Please draw a land polygon with at least 3 points."
+);
+
+return;
+
+}
+
+
+const area=
+calculatePolygonArea(
+geometry
+);
+
+const perimeter=
+calculatePolygonPerimeter(
+geometry
+);
+
+
+const now=
+new Date().toISOString();
+
+
+if(editingLandId){
+
+const index=
+landParcels.findIndex(
+p=>p.id===editingLandId
+);
+
+if(index===-1){
+
+alert(
+"Land parcel not found."
+);
+
+return;
+
+}
+
+
+landParcels[index]={
+
+...landParcels[index],
+
+id:landId,
+
+surveyNo:surveyNo,
+
+village:village,
+
+taluka:taluka,
+
+district:district,
+
+areaSqM:area,
+
+areaHectare:area/10000,
+
+areaAcre:area/4046.8564224,
+
+perimeterM:perimeter,
+
+landUse:landUse,
+
+status:status,
+
+surveyMethod:surveyMethod,
+
+demarcationDate:demarcationDate,
+
+ownerRef:ownerRef,
+
+remarks:remarks,
+
+geometry:geometry,
+
+updatedAt:now
+
+};
+
+
+}else{
+
+
+const duplicate=
+landParcels.some(
+p=>
+String(p.id).toLowerCase()===
+landId.toLowerCase()
+);
+
+
+if(duplicate){
+
+alert(
+"Land ID already exists.\n\nPlease use a unique Land ID."
+);
+
+return;
+
+}
+
+
+const parcel={
+
+id:landId,
+
+surveyNo:surveyNo,
+
+village:village,
+
+taluka:taluka,
+
+district:district,
+
+areaSqM:area,
+
+areaHectare:area/10000,
+
+areaAcre:area/4046.8564224,
+
+perimeterM:perimeter,
+
+landUse:landUse,
+
+status:status,
+
+surveyMethod:surveyMethod,
+
+demarcationDate:demarcationDate,
+
+ownerRef:ownerRef,
+
+remarks:remarks,
+
+geometry:geometry,
+
+createdAt:now,
+
+updatedAt:now
+
+};
+
+
+landParcels.push(parcel);
+
+}
+
+
+saveLandData();
+
+loadLandParcels();
+
+editingLandId=null;
+
+clearLandDrawing();
+
+closeLandModal();
+
+showLandParcelList();
+
+
+alert(
+"Land parcel saved successfully.\n\n"+
+"Land ID: "+
+landId+
+"\nArea: "+
+formatArea(area)+
+"\nPerimeter: "+
+formatDistance(perimeter)
+);
+
+}
+
+
+/* =====================================================
+DRAW SAVED LAND PARCEL
+===================================================== */
+
+function drawSavedLandParcel(parcel){
+
+if(
+!parcel.geometry ||
+parcel.geometry.length<3
+){
+
+return;
+
+}
+
+const latlngs=
+parcel.geometry.map(
+p=>[
+Number(p.lat),
+Number(p.lng)
+]
+);
+
+
+const polygon=
+L.polygon(
+latlngs,
+{
+color:"#087f8c",
+weight:3,
+fillColor:"#087f8c",
+fillOpacity:.18,
+className:"landPolygon"
+}
+);
+
+
+polygon.addTo(
+landParcelLayer
+);
+
+
+landMarkerLayers[parcel.id]=
+polygon;
+
+
+polygon.bindPopup(
+landPopupHTML(parcel)
+);
+
+
+polygon.on(
+"click",
+function(){
+
+polygon.openPopup();
+
+}
+);
+
+}
+
+
+/* =====================================================
+LAND POPUP HTML
+===================================================== */
+
+function landPopupHTML(parcel){
+
+return `
+
+<div>
+
+<div class="landPopupTitle">
+
+📐 ${esc(parcel.id)}
+
+</div>
+
+
+<div class="landPopupMeta">
+
+<b>Survey / Gat No:</b>
+${esc(parcel.surveyNo || "-")}
+
+<br>
+
+<b>Village:</b>
+${esc(parcel.village || "-")}
+
+<br>
+
+<b>Taluka:</b>
+${esc(parcel.taluka || "-")}
+
+<br>
+
+<b>District:</b>
+${esc(parcel.district || "-")}
+
+<br>
+
+<b>Area:</b>
+${esc(formatArea(Number(parcel.areaSqM)))}
+
+<br>
+
+<b>Perimeter:</b>
+${esc(formatDistance(Number(parcel.perimeterM)))}
+
+<br>
+
+<b>Land Use:</b>
+${esc(parcel.landUse || "-")}
+
+<br>
+
+<b>Status:</b>
+${esc(parcel.status || "-")}
+
+<br>
+
+<b>Survey Method:</b>
+${esc(parcel.surveyMethod || "-")}
+
+<br>
+
+<b>Demarcation Date:</b>
+${esc(parcel.demarcationDate || "-")}
+
+</div>
+
+
+<div class="popupButtons">
+
+<button
+class="btnBlue"
+onclick="viewLandDetails('${esc(parcel.id)}')">
+
+📋 Full Details
+
+</button>
+
+
+<button
+class="btnOrange"
+onclick="editLandParcel('${esc(parcel.id)}')">
+
+✎ Edit
+
+</button>
+
+
+<button
+class="btnRed"
+onclick="deleteLandParcel('${esc(parcel.id)}')">
+
+🗑 Delete
+
+</button>
+
+
+<button
+class="btnLight"
+onclick="landSpatialAnalysis('${esc(parcel.id)}')">
+
+🧭 Spatial Analysis
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================================
+LAND DETAILS
+===================================================== */
+
+function viewLandDetails(id){
+
+const parcel=
+landParcels.find(
+p=>String(p.id)===String(id)
+);
+
+if(!parcel){
+
+alert(
+"Land parcel not found."
+);
+
+return;
+
+}
+
+const geometry=
+parcel.geometry || [];
+
+let coordinateHTML="";
+
+geometry.forEach(
+(p,index)=>{
+
+coordinateHTML+=`
+
+<tr>
+
+<td style="padding:5px;border-bottom:1px solid #e5e7eb">
+${index+1}
+</td>
+
+<td style="padding:5px;border-bottom:1px solid #e5e7eb">
+${Number(p.lat).toFixed(7)}
+</td>
+
+<td style="padding:5px;border-bottom:1px solid #e5e7eb">
+${Number(p.lng).toFixed(7)}
+</td>
+
+</tr>
+
+`;
+
+}
+);
+
+
+document.getElementById(
+"landDetailsBody"
+).innerHTML=`
+
+<div class="landInfoBox">
+
+<div class="landPopupTitle">
+
+${esc(parcel.id)}
+
+</div>
+
+<b>Survey / Gat No:</b>
+${esc(parcel.surveyNo || "-")}
+
+<br>
+
+<b>Village:</b>
+${esc(parcel.village || "-")}
+
+<br>
+
+<b>Taluka:</b>
+${esc(parcel.taluka || "-")}
+
+<br>
+
+<b>District:</b>
+${esc(parcel.district || "-")}
+
+<br>
+
+<b>Land Use:</b>
+${esc(parcel.landUse || "-")}
+
+<br>
+
+<b>Status:</b>
+${esc(parcel.status || "-")}
+
+<br>
+
+<b>Survey Method:</b>
+${esc(parcel.surveyMethod || "-")}
+
+<br>
+
+<b>Demarcation Date:</b>
+${esc(parcel.demarcationDate || "-")}
+
+<br>
+
+<b>Client / Owner Reference:</b>
+${esc(parcel.ownerRef || "-")}
+
+<br>
+
+<b>Area:</b>
+${esc(formatArea(Number(parcel.areaSqM)))}
+
+<br>
+
+<b>Perimeter:</b>
+${esc(formatDistance(Number(parcel.perimeterM)))}
+
+<br>
+
+<b>Remarks:</b>
+${esc(parcel.remarks || "-")}
+
+</div>
+
+
+<div style="margin-top:10px">
+
+<div class="resultHeader">
+📍 Polygon Coordinates
+</div>
+
+<div style="
+max-height:220px;
+overflow:auto;
+border:1px solid #e2e8f0;
+border-radius:7px;
+">
+
+<table style="
+width:100%;
+border-collapse:collapse;
+font-size:10px;
+">
+
+<thead>
+
+<tr style="
+background:#f1f5f9;
+">
+
+<th style="padding:5px;text-align:left">
+Point
+</th>
+
+<th style="padding:5px;text-align:left">
+Latitude
+</th>
+
+<th style="padding:5px;text-align:left">
+Longitude
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${coordinateHTML}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<div class="popupButtons">
+
+<button
+class="btnBlue"
+onclick="zoomToLand('${esc(parcel.id)}')">
+
+🔍 Zoom to Parcel
+
+</button>
+
+<button
+class="btnOrange"
+onclick="editLandParcel('${esc(parcel.id)}')">
+
+✎ Edit
+
+</button>
+
+<button
+class="btnLight"
+onclick="landSpatialAnalysis('${esc(parcel.id)}')">
+
+🧭 Spatial Analysis
+
+</button>
+
+</div>
+
+`;
+
+document.getElementById(
+"landModal"
+).style.display="none";
+
+document.getElementById(
+"landListModal"
+).style.display="none";
+
+openModal(
+"landDetailsModal"
+);
+
+}
+
+
+/* =====================================================
+LAND DETAILS CLOSE
+===================================================== */
+
+function closeLandDetails(){
+
+document.getElementById(
+"landDetailsModal"
+).style.display=
+"none";
+
+if(
+document.getElementById(
+"propertyModal"
+).style.display!=="block" &&
+document.getElementById(
+"landModal"
+).style.display!=="block" &&
+document.getElementById(
+"landListModal"
+).style.display!=="block" &&
+document.getElementById(
+"adminPanel"
+).style.display!=="block"
+){
+
+document.getElementById(
+"overlay"
+).style.display=
+"none";
+
+}
+
+}
+
+
+/* =====================================================
+LAND LIST
+===================================================== */
+
+function showLandParcelList(){
+
+const box=
+document.getElementById(
+"landListBody"
+);
+
+if(!landParcels.length){
+
+box.innerHTML=`
+
+<div class="adminEmpty">
+
+📐 No land parcels available.
+
+<br><br>
+
+Create your first land parcel using
+<strong>Create Land Parcel</strong>.
+
+</div>
+
+`;
+
+}else{
+
+let html=`
+
+<div class="resultHeader">
+
+${landParcels.length} land parcel(s) stored
+
+</div>
+
+`;
+
+landParcels.forEach(
+parcel=>{
+
+html+=`
+
+<div class="resultCard">
+
+<div class="resultTitle">
+
+📐 ${esc(parcel.id)}
+
+</div>
+
+<div class="resultMeta">
+
+<b>Survey/Gat:</b>
+${esc(parcel.surveyNo || "-")}
+
+<br>
+
+<b>Village:</b>
+${esc(parcel.village || "-")}
+
+<br>
+
+<b>Area:</b>
+${esc(formatArea(Number(parcel.areaSqM)))}
+
+<br>
+
+<b>Land Use:</b>
+${esc(parcel.landUse || "-")}
+
+<br>
+
+<b>Survey:</b>
+${esc(parcel.surveyMethod || "-")}
+
+</div>
+
+
+<div class="popupButtons">
+
+<button
+class="btnBlue"
+onclick="viewLandDetails('${esc(parcel.id)}')">
+
+Details
+
+</button>
+
+<button
+class="btnOrange"
+onclick="editLandParcel('${esc(parcel.id)}')">
+
+Edit
+
+</button>
+
+<button
+class="btnRed"
+onclick="deleteLandParcel('${esc(parcel.id)}')">
+
+Delete
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+);
+
+box.innerHTML=html;
+
+}
+
+document.getElementById(
+"landListModal"
+).style.display=
+"block";
+
+document.getElementById(
+"overlay"
+).style.display=
+"block";
+
+}
+
+
+/* =====================================================
+LAND LIST CLOSE
+===================================================== */
+
+function closeLandList(){
+
+document.getElementById(
+"landListModal"
+).style.display=
+"none";
+
+if(
+document.getElementById(
+"propertyModal"
+).style.display!=="block" &&
+document.getElementById(
+"landModal"
+).style.display!=="block" &&
+document.getElementById(
+"landDetailsModal"
+).style.display!=="block" &&
+document.getElementById(
+"adminPanel"
+).style.display!=="block"
+){
+
+document.getElementById(
+"overlay"
+).style.display=
+"none";
+
+}
+
+}
+
+
+/* =====================================================
+LAND MODAL CLOSE
+===================================================== */
+
+function closeLandModal(){
+
+document.getElementById(
+"landModal"
+).style.display=
+"none";
+
+if(landDrawing){
+
+clearLandDrawing();
+
+}
+
+if(
+document.getElementById(
+"propertyModal"
+).style.display!=="block" &&
+document.getElementById(
+"landDetailsModal"
+).style.display!=="block" &&
+document.getElementById(
+"landListModal"
+).style.display!=="block" &&
+document.getElementById(
+"adminPanel"
+).style.display!=="block"
+){
+
+document.getElementById(
+"overlay"
+).style.display=
+"none";
+
+}
+
+}
+
+
+/* =====================================================
+EDIT LAND PARCEL
+===================================================== */
+
+function editLandParcel(id){
+
+const parcel=
+landParcels.find(
+p=>String(p.id)===String(id)
+);
+
+if(!parcel){
+
+alert(
+"Land parcel not found."
+);
+
+return;
+
+}
+
+editingLandId=
+parcel.id;
+
+
+document.getElementById(
+"landModalTitle"
+).textContent=
+"📐 Edit Land Parcel";
+
+
+document.getElementById(
+"landId"
+).value=
+parcel.id || "";
+
+
+document.getElementById(
+"landSurveyNo"
+).value=
+parcel.surveyNo || "";
+
+
+document.getElementById(
+"landVillage"
+).value=
+parcel.village || "";
+
+
+document.getElementById(
+"landTaluka"
+).value=
+parcel.taluka || "";
+
+
+document.getElementById(
+"landDistrict"
+).value=
+parcel.district || "Nagpur";
+
+
+document.getElementById(
+"landUse"
+).value=
+parcel.landUse || "Agricultural";
+
+
+document.getElementById(
+"landStatus"
+).value=
+parcel.status || "Surveyed";
+
+
+document.getElementById(
+"landSurveyMethod"
+).value=
+parcel.surveyMethod || "DGPS";
+
+
+document.getElementById(
+"landDate"
+).value=
+parcel.demarcationDate || "";
+
+
+document.getElementById(
+"landOwnerRef"
+).value=
+parcel.ownerRef || "";
+
+
+document.getElementById(
+"landRemarks"
+).value=
+parcel.remarks || "";
+
+
+landDrawPoints=
+(parcel.geometry || []).map(
+p=>({
+lat:Number(p.lat),
+lng:Number(p.lng)
+})
+);
+
+
+document.getElementById(
+"landDrawStatus"
+).textContent=
+landDrawPoints.length+
+" saved polygon vertices loaded.";
+
+
+document.getElementById(
+"landCalculated"
+).innerHTML=
+"Area: <b>"+
+formatArea(Number(parcel.areaSqM))+
+"</b><br>"+
+"Perimeter: <b>"+
+formatDistance(Number(parcel.perimeterM))+
+"</b>";
+
+
+closeLandList();
+
+closeLandDetails();
+
+openModal(
+"landModal"
+);
+
+
+/*
+Show saved geometry temporarily for
+editing.
+*/
+
+clearLandTempLayers();
+
+if(
+landDrawPoints.length>=3
+){
+
+landTempPolygon=
+L.polygon(
+landDrawPoints.map(
+p=>[
+p.lat,
+p.lng
+]
+),
+{
+color:"#f59e0b",
+weight:3,
+fillColor:"#f59e0b",
+fillOpacity:.15,
+dashArray:"6 4"
+}
+).addTo(map);
+
+map.fitBounds(
+landTempPolygon.getBounds(),
+{
+padding:[30,30]
+}
+);
+
+}
+
+}
+
+
+/* =====================================================
+DELETE LAND PARCEL
+===================================================== */
+
+function deleteLandParcel(id){
+
+const parcel=
+landParcels.find(
+p=>String(p.id)===String(id)
+);
+
+if(!parcel){
+
+alert(
+"Land parcel not found."
+);
+
+return;
+
+}
+
+const ok=
+confirm(
+"Delete this land parcel permanently?\n\n"+
+"Land ID: "+
+parcel.id+
+"\n\nThis action cannot be undone."
+);
+
+if(!ok){
+
+return;
+
+}
+
+
+const layer=
+landMarkerLayers[id];
+
+if(layer){
+
+try{
+
+landParcelLayer.removeLayer(
+layer
+);
+
+}catch(e){}
+
+}
+
+
+landParcels=
+landParcels.filter(
+p=>String(p.id)!==String(id)
+);
+
+
+saveLandData();
+
+loadLandParcels();
+
+showLandParcelList();
+
+alert(
+"Land parcel deleted successfully."
+);
+
+}
+
+
+/* =====================================================
+ZOOM TO LAND
+===================================================== */
+
+function zoomToLand(id){
+
+const parcel=
+landParcels.find(
+p=>String(p.id)===String(id)
+);
+
+if(!parcel){
+
+return;
+
+}
+
+if(
+!parcel.geometry ||
+parcel.geometry.length<3
+){
+
+return;
+
+}
+
+const latlngs=
+parcel.geometry.map(
+p=>[
+Number(p.lat),
+Number(p.lng)
+]
+);
+
+const bounds=
+L.latLngBounds(
+latlngs
+);
+
+map.fitBounds(
+bounds,
+{
+padding:[50,50],
+maxZoom:18
+}
+);
+
+closeLandDetails();
+
+const layer=
+landMarkerLayers[id];
+
+if(layer){
+
+setTimeout(
+function(){
+
+layer.openPopup();
+
+},
+500
+);
+
+}
+
+}
+
+
+/* =====================================================
+LAND SPATIAL ANALYSIS PLACEHOLDER
+===================================================== */
+
+function landSpatialAnalysis(id){
+
+const parcel=
+landParcels.find(
+p=>String(p.id)===String(id)
+);
+
+if(!parcel){
+
+return;
+
+}
+
+alert(
+"Spatial Analysis module is planned for Phase 3.\n\n"+
+"Land ID: "+
+parcel.id+
+"\n\n"+
+"Planned analysis:\n"+
+"• Road relationship\n"+
+"• Railway relationship\n"+
+"• Water body relationship\n"+
+"• Urban area relationship\n"+
+"• Education facilities\n"+
+"• Commercial facilities\n"+
+"• Healthcare facilities\n"+
+"• Distance analysis\n"+
+"• Planning / zoning relationship"
+);
+
+}
+
+
+/* =====================================================
+ESCAPE KEY
 ===================================================== */
 
 document.addEventListener(
@@ -4291,6 +6535,12 @@ locationPicker=null;
 
 }
 
+if(landDrawing){
+
+clearLandDrawing();
+
+}
+
 closeAllModals();
 
 }
@@ -4305,18 +6555,17 @@ INITIALIZE
 
 loadStoredProperties();
 
+loadLandData();
+
 populateAreaList();
 
 load();
 
+loadLandParcels();
+
 clearPropertySearch();
 
 updateAdminCount();
-
-
-/*
-Enhanced default zoom.
-*/
 
 map.setView(
 NAGPUR,
@@ -4340,6 +6589,48 @@ adminEditProperty;
 window.deletePropertyFromAdmin=
 deletePropertyFromAdmin;
 
+window.openLandDemarcation=
+openLandDemarcation;
+
+window.startLandDrawing=
+startLandDrawing;
+
+window.finishLandDrawing=
+finishLandDrawing;
+
+window.cancelLandDrawing=
+cancelLandDrawing;
+
+window.saveLandParcel=
+saveLandParcel;
+
+window.viewLandDetails=
+viewLandDetails;
+
+window.editLandParcel=
+editLandParcel;
+
+window.deleteLandParcel=
+deleteLandParcel;
+
+window.zoomToLand=
+zoomToLand;
+
+window.landSpatialAnalysis=
+landSpatialAnalysis;
+
+window.showLandParcelList=
+showLandParcelList;
+
+window.closeLandModal=
+closeLandModal;
+
+window.closeLandDetails=
+closeLandDetails;
+
+window.closeLandList=
+closeLandList;
+
 
 /* =====================================================
 LOG
@@ -4355,11 +6646,20 @@ properties
 );
 
 console.log(
+"Land Parcels:",
+landParcels
+);
+
+console.log(
 "Enhanced Zoom: 9 - 22"
 );
 
 console.log(
 "Street View: Enabled"
+);
+
+console.log(
+"Land Demarcation: Phase 1 Enabled"
 );
 
 </script>
