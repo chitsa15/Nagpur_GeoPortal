@@ -1838,6 +1838,7 @@ let landTempPolygon=null;
 
 let landTempMarkers=[];
 let landDrawingHistory=[];
+let landDrawingRedoHistory=[];
 let landDrawingFinished=false;
 let landContextMenu=null;
 let landContextParcel=null;
@@ -4801,6 +4802,7 @@ hideLandContextMenu();
 landDrawing=true;
 landDrawingFinished=false;
 landDrawingHistory=[];
+landDrawingRedoHistory=[];
 landDrawPoints=[];
 clearLandTempLayers();
 
@@ -4840,6 +4842,17 @@ redrawLandTempGeometry();
 document.getElementById("landDrawStatus").textContent=
 landDrawPoints.length+
 " point(s) captured. Last vertex removed. Minimum 3 points required.";
+}
+
+
+function redoLastLandVertex(){
+if(!landDrawing || !landDrawingRedoHistory.length){
+alert("Nothing to redo.");
+return;
+}
+landDrawingHistory.push(landDrawPoints.map(p=>({lat:Number(p.lat),lng:Number(p.lng)})));
+landDrawPoints=landDrawingRedoHistory.pop().map(p=>({lat:Number(p.lat),lng:Number(p.lng)}));
+redrawLandTempGeometry();
 }
 
 function redrawLandTempGeometry(){
@@ -5076,6 +5089,36 @@ updateEditedLandPolygon();
 map.fitBounds(L.latLngBounds(landDrawPoints.map(p=>[p.lat,p.lng])),{padding:[50,50],maxZoom:18});
 document.getElementById("landDrawStatus").textContent=
 landDrawPoints.length+" editable vertices. Drag vertices, then right-click polygon and choose Finish Polygon.";
+}
+
+
+function addLandEditVertexAtSegment(parcel, segmentIndex){
+if(!landEditingGeometryId || !parcel || parcel.id!==landEditingGeometryId) return;
+let pts=normalizeLandGeometry(parcel.geometry||[]);
+if(pts.length<2) return;
+const a=pts[segmentIndex % pts.length];
+const b=pts[(segmentIndex+1) % pts.length];
+const mid={
+lat:(Number(a.lat)+Number(b.lat))/2,
+lng:(Number(a.lng)+Number(b.lng))/2
+};
+pts.splice(segmentIndex+1,0,mid);
+parcel.geometry=pts.concat([{...pts[0]}]);
+updateEditedLandPolygon(parcel);
+createLandEditVertexMarkers(parcel);
+}
+
+function deleteLandEditVertex(parcel, index){
+if(!landEditingGeometryId || !parcel || parcel.id!==landEditingGeometryId) return;
+let pts=normalizeLandGeometry(parcel.geometry||[]);
+if(pts.length<=3){
+alert("A polygon must have at least 3 vertices.");
+return;
+}
+pts.splice(index,1);
+parcel.geometry=pts.concat([{...pts[0]}]);
+updateEditedLandPolygon(parcel);
+createLandEditVertexMarkers(parcel);
 }
 
 function finishLandPolygonEdit(){
