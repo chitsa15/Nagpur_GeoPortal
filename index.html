@@ -773,6 +773,13 @@ position:fixed;z-index:100000;display:none;min-width:190px;background:#fff;borde
 .landContextMenu .danger{color:#b42318;}
 .landEditVertex{background:#f59e0b;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.4);}
 
+
+
+/* ================= SPATIAL ANALYSIS ================= */
+.spatialPanel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(920px,94vw);max-height:90vh;overflow:auto;background:#fff;z-index:2700;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.38)}
+.spatialHeader{position:sticky;top:0;z-index:2;background:linear-gradient(90deg,#071d3a,#0b5cab,#087f8c);color:#fff;padding:13px;display:flex;align-items:center;justify-content:space-between}
+.spatialHeader h3{margin:0;font-size:16px}.spatialBody{padding:13px}.spatialGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.analysisCard{border:1px solid #dbe3ec;border-radius:10px;padding:10px;background:#fbfdff}.analysisCard h4{margin:0 0 7px;color:#0b4777;font-size:13px}.analysisTable{width:100%;border-collapse:collapse;font-size:11px}.analysisTable th,.analysisTable td{padding:7px;border-bottom:1px solid #e5ebf1;text-align:left}.analysisTable th{background:#f1f7fb;color:#0b4777}.analysisResult{max-height:270px;overflow:auto}.analysisPill{display:inline-block;padding:3px 7px;border-radius:10px;background:#eef7f9;color:#075d69;font-weight:700;font-size:10px;margin:2px}.analysisToolbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.analysisToolbar>*{flex:1;min-width:120px}.analysisNote{font-size:11px;color:#64748b;line-height:1.5}.nearestLine{stroke:#f59e0b;stroke-width:2;stroke-dasharray:6 5;opacity:.9}.spatialSelected{stroke:#dc3545;stroke-width:4;fill:#dc3545;fill-opacity:.08}
+@media(max-width:800px){.spatialGrid{grid-template-columns:1fr}.spatialPanel{max-height:94vh}}
 </style>
 </head>
 
@@ -3224,6 +3231,8 @@ function closeAllModals(){
 closePropertyModal();
 
 closeAdminPanel();
+
+if(typeof closeSpatialAnalysis === "function") closeSpatialAnalysis();
 
 closeLandModal();
 
@@ -6492,36 +6501,81 @@ layer.openPopup();
 LAND SPATIAL ANALYSIS PLACEHOLDER
 ===================================================== */
 
+let spatialAnalysisParcelId=null;
+let spatialAnalysisGraphics=[];
+
 function landSpatialAnalysis(id){
-
-const parcel=
-landParcels.find(
-p=>String(p.id)===String(id)
-);
-
-if(!parcel){
-
-return;
-
+  const parcel=landParcels.find(p=>String(p.id)===String(id));
+  if(!parcel || !parcel.geometry || parcel.geometry.length<3){ alert("Valid polygon geometry is required for Spatial Analysis."); return; }
+  spatialAnalysisParcelId=parcel.id;
+  clearSpatialAnalysisGraphics();
+  const center=polygonCentroidLatLng(parcel.geometry);
+  document.getElementById("spatialSummary").innerHTML=
+    `<b>Land Parcel:</b> ${esc(parcel.name||parcel.title||parcel.id)} &nbsp; <span class="analysisPill">ID: ${esc(parcel.id)}</span><br>`+
+    `<span class="analysisNote">Reference centroid: ${center[0].toFixed(6)}, ${center[1].toFixed(6)} · Approved properties are used for nearest-property analysis.</span>`;
+  document.getElementById("nearestPropertyResults").innerHTML='<div class="analysisNote">Run analysis to calculate nearest properties.</div>';
+  document.getElementById("spatialRelationships").innerHTML='<div class="analysisNote">Waiting for analysis...</div>';
+  document.getElementById("spatialProximity").innerHTML='<div class="analysisNote">Waiting for analysis...</div>';
+  document.getElementById("spatialStatistics").innerHTML='<div class="analysisNote">Waiting for analysis...</div>';
+  document.getElementById("spatialInterpretation").textContent="Select a radius and run the GIS analysis.";
+  document.getElementById("spatialAnalysisPanel").style.display="block";
+  document.getElementById("overlay").style.display="block";
+  map.fitBounds(L.latLngBounds(parcel.geometry.map(p=>[Number(p.lat),Number(p.lng)])),{padding:[60,60],maxZoom:18});
 }
 
-alert(
-"Spatial Analysis module is planned for Phase 3.\n\n"+
-"Land ID: "+
-parcel.id+
-"\n\n"+
-"Planned analysis:\n"+
-"• Road relationship\n"+
-"• Railway relationship\n"+
-"• Water body relationship\n"+
-"• Urban area relationship\n"+
-"• Education facilities\n"+
-"• Commercial facilities\n"+
-"• Healthcare facilities\n"+
-"• Distance analysis\n"+
-"• Planning / zoning relationship"
-);
-
+function polygonCentroidLatLng(geometry){
+  let lat=0,lng=0,n=geometry.length;
+  geometry.forEach(p=>{lat+=Number(p.lat);lng+=Number(p.lng);});
+  return [lat/n,lng/n];
+}
+function haversineMeters(a,b){
+  const R=6371008.8, dLat=(b[0]-a[0])*Math.PI/180, dLon=(b[1]-a[1])*Math.PI/180;
+  const x=Math.sin(dLat/2)**2+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLon/2)**2;
+  return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+function formatDistance(m){return m<1000?`${Math.round(m)} m`:`${(m/1000).toFixed(2)} km`;}
+function clearSpatialAnalysisGraphics(){
+  spatialAnalysisGraphics.forEach(x=>{try{map.removeLayer(x)}catch(e){}}); spatialAnalysisGraphics=[];
+}
+function closeSpatialAnalysis(){
+  clearSpatialAnalysisGraphics();
+  document.getElementById("spatialAnalysisPanel").style.display="none";
+  document.getElementById("overlay").style.display="none";
+  spatialAnalysisParcelId=null;
+}
+function zoomToSpatialProperty(id){
+  const p=properties.find(x=>String(x.id)===String(id)); if(!p)return;
+  const lat=Number(p.lat),lng=Number(p.lng); if(!isFinite(lat)||!isFinite(lng))return;
+  map.setView([lat,lng],18);
+  const marker=propertyMarkerMap[p.id]; if(marker && marker.openPopup) marker.openPopup();
+}
+function runLandSpatialAnalysis(){
+  const parcel=landParcels.find(p=>String(p.id)===String(spatialAnalysisParcelId));
+  if(!parcel || !parcel.geometry || parcel.geometry.length<3)return;
+  clearSpatialAnalysisGraphics();
+  const center=polygonCentroidLatLng(parcel.geometry);
+  const radius=Number(document.getElementById("spatialRadius").value)||1000;
+  const limit=Number(document.getElementById("spatialLimit").value)||10;
+  const publicProps=publicProperties().filter(p=>isFinite(Number(p.lat))&&isFinite(Number(p.lng)));
+  const ranked=publicProps.map(p=>({...p,_distance:haversineMeters(center,[Number(p.lat),Number(p.lng)])})).sort((a,b)=>a._distance-b._distance);
+  const within=ranked.filter(p=>p._distance<=radius).slice(0,limit);
+  const nearest=ranked.slice(0,limit);
+  const poly=L.polygon(parcel.geometry.map(p=>[Number(p.lat),Number(p.lng)]),{className:"spatialSelected",interactive:false}); poly.addTo(map); spatialAnalysisGraphics.push(poly);
+  const circle=L.circle(center,{radius,color:"#0b5cab",fill:false,weight:2,dashArray:"7 5",interactive:false}).addTo(map); spatialAnalysisGraphics.push(circle);
+  const analysisList=within.length?within:nearest;
+  analysisList.forEach((p,i)=>{
+    const line=L.polyline([center,[Number(p.lat),Number(p.lng)]],{className:"nearestLine",interactive:false}).addTo(map); spatialAnalysisGraphics.push(line);
+  });
+  document.getElementById("nearestPropertyResults").innerHTML=analysisList.length?`<table class="analysisTable"><thead><tr><th>#</th><th>Property</th><th>Type</th><th>Distance</th><th>Action</th></tr></thead><tbody>`+
+    analysisList.map((p,i)=>`<tr><td>${i+1}</td><td><b>${esc(p.title||p.name||"Property")}</b><br><span class="analysisNote">${esc(p.area||p.location||"")}</span></td><td>${esc(typeText(p.type))}</td><td><b>${formatDistance(p._distance)}</b></td><td><button class="btnLight" onclick="zoomToSpatialProperty('${esc(p.id)}')">Zoom</button></td></tr>`).join("")+`</tbody></table>`:
+    `<div class="analysisNote">No approved properties found within ${formatDistance(radius)}. Nearest available properties are shown only when outside the selected radius.</div>`;
+  const nearestAny=ranked[0];
+  document.getElementById("spatialRelationships").innerHTML=`<div><span class="analysisPill">Nearest property: ${nearestAny?formatDistance(nearestAny._distance):"N/A"}</span><span class="analysisPill">Radius: ${formatDistance(radius)}</span><span class="analysisPill">Found: ${within.length}</span></div><p class="analysisNote">The parcel is analysed as a polygon reference area. Property proximity is measured from the parcel centroid using geodesic distance.</p>`;
+  document.getElementById("spatialProximity").innerHTML=`<table class="analysisTable"><tr><th>Measure</th><th>Result</th></tr><tr><td>Search Radius</td><td>${formatDistance(radius)}</td></tr><tr><td>Approved Properties</td><td>${publicProps.length}</td></tr><tr><td>Properties in Radius</td><td>${within.length}</td></tr><tr><td>Nearest Available</td><td>${nearestAny?formatDistance(nearestAny._distance):"N/A"}</td></tr></table>`;
+  const total=ranked.reduce((s,p)=>s+p._distance,0);
+  document.getElementById("spatialStatistics").innerHTML=`<table class="analysisTable"><tr><th>Statistic</th><th>Value</th></tr><tr><td>Reference Centroid</td><td>${center[0].toFixed(6)}, ${center[1].toFixed(6)}</td></tr><tr><td>Properties Analysed</td><td>${ranked.length}</td></tr><tr><td>Returned</td><td>${analysisList.length}</td></tr><tr><td>Mean Distance</td><td>${ranked.length?formatDistance(total/ranked.length):"N/A"}</td></tr></table>`;
+  document.getElementById("spatialInterpretation").textContent=within.length?`${within.length} approved property/properties fall within the selected ${formatDistance(radius)} analysis radius. Distance lines connect the parcel centroid to the returned properties.`:`No approved property falls within ${formatDistance(radius)}. The analysis map shows the nearest available properties for spatial context.`;
+  map.fitBounds(L.latLngBounds([center,...analysisList.map(p=>[Number(p.lat),Number(p.lng)])]),{padding:[70,70],maxZoom:17});
 }
 
 
@@ -6648,6 +6702,11 @@ zoomToLand;
 
 window.landSpatialAnalysis=
 landSpatialAnalysis;
+
+window.runLandSpatialAnalysis=runLandSpatialAnalysis;
+window.closeSpatialAnalysis=closeSpatialAnalysis;
+window.zoomToSpatialProperty=zoomToSpatialProperty;
+window.clearSpatialAnalysisGraphics=clearSpatialAnalysisGraphics;
 
 window.showLandParcelList=
 showLandParcelList;
