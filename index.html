@@ -763,6 +763,16 @@ background:transparent;
 border:0;
 }
 
+
+/* ================= LAND POLYGON CONTEXT / EDIT ================= */
+.landContextMenu{
+position:fixed;z-index:100000;display:none;min-width:190px;background:#fff;border:1px solid #cbd5e1;border-radius:9px;box-shadow:0 10px 28px rgba(0,0,0,.25);padding:5px;overflow:hidden;
+}
+.landContextMenu button{display:block;width:100%;text-align:left;background:#fff;color:#172033;border-radius:6px;padding:9px 10px;font-size:12px;font-weight:700;border:0;transform:none;}
+.landContextMenu button:hover{background:#eef7f9;color:#075d69;transform:none;}
+.landContextMenu .danger{color:#b42318;}
+.landEditVertex{background:#f59e0b;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.4);}
+
 </style>
 </head>
 
@@ -1827,6 +1837,12 @@ let landTempLine=null;
 let landTempPolygon=null;
 
 let landTempMarkers=[];
+let landDrawingHistory=[];
+let landDrawingFinished=false;
+let landContextMenu=null;
+let landContextParcel=null;
+let landEditVertexMarkers=[];
+let landEditingGeometryId=null;
 
 
 /* =====================================================
@@ -4752,6 +4768,7 @@ function openLandDemarcation(){
 
 editingLandId=null;
 
+stopLandGeometryEditing();
 clearLandDrawing();
 
 clearLandForm();
@@ -4774,375 +4791,327 @@ LAND DRAWING START
 
 function startLandDrawing(){
 
-/*
-If drawing was already active, do not
-create another click listener.
-*/
-
 if(landDrawing){
-
-alert(
-"Polygon drawing is already active.\n\n"+
-"Click points on the map and press Finish."
-);
-
+alert("Polygon drawing is already active.\n\nClick points on the map and press Finish.");
 return;
-
 }
 
+stopLandGeometryEditing();
+hideLandContextMenu();
 landDrawing=true;
-
+landDrawingFinished=false;
+landDrawingHistory=[];
 landDrawPoints=[];
-
 clearLandTempLayers();
 
-document.getElementById(
-"landDrawStatus"
-).textContent=
-"Drawing active: click 3 or more points on the map.";
+document.getElementById("landDrawStatus").textContent=
+"Drawing active: click 3 or more points on the map. Ctrl+Z = undo last point.";
 
-
-/*
-Close the modal temporarily so the map
-can be used comfortably.
-*/
-
-document.getElementById(
-"landModal"
-).style.display=
-"none";
-
-
-document.getElementById(
-"overlay"
-).style.display=
-"none";
-
-
-map.getContainer().style.cursor=
-"crosshair";
-
-
-map.on(
-"click",
-landMapClick
-);
-
+document.getElementById("landModal").style.display="none";
+document.getElementById("overlay").style.display="none";
+map.getContainer().style.cursor="crosshair";
+map.on("click",landMapClick);
+map.on("contextmenu",landMapContextMenu);
 }
-
 
 /* =====================================================
-LAND MAP CLICK
+LAND MAP CLICK / VERTEX
 ===================================================== */
-
 function landMapClick(e){
+if(!landDrawing || landDrawingFinished){return;}
+addLandVertex({lat:e.latlng.lat,lng:e.latlng.lng});
+}
 
-if(!landDrawing){
+function addLandVertex(point){
+landDrawPoints.push({lat:Number(point.lat),lng:Number(point.lng)});
+landDrawingHistory.push(landDrawPoints.length);
+redrawLandTempGeometry();
+}
 
+function undoLastLandVertex(){
+if(!landDrawing){return;}
+if(!landDrawPoints.length){
+alert("No polygon vertex to undo.");
 return;
-
+}
+landDrawPoints.pop();
+landDrawingHistory.pop();
+redrawLandTempGeometry();
+document.getElementById("landDrawStatus").textContent=
+landDrawPoints.length+
+" point(s) captured. Last vertex removed. Minimum 3 points required.";
 }
 
-const point={
-lat:e.latlng.lat,
-lng:e.latlng.lng
-};
+function redrawLandTempGeometry(){
+clearLandTempLayers();
+const latlngs=landDrawPoints.map(p=>[Number(p.lat),Number(p.lng)]);
 
-landDrawPoints.push(point);
-
-const vertex=
-L.circleMarker(
-[
-point.lat,
-point.lng
-],
-{
-radius:5,
-color:"#dc3545",
-weight:2,
-fillColor:"#dc3545",
-fillOpacity:1
-}
-).addTo(map);
-
+landDrawPoints.forEach(point=>{
+const vertex=L.circleMarker([point.lat,point.lng],{
+radius:5,color:"#dc3545",weight:2,fillColor:"#dc3545",fillOpacity:1
+}).addTo(map);
 landTempMarkers.push(vertex);
+});
 
-
-/*
-Update temporary geometry.
-*/
-
-const latlngs=
-landDrawPoints.map(
-p=>[
-p.lat,
-p.lng
-]
-);
-
-
-if(landTempLine){
-
-map.removeLayer(
-landTempLine
-);
-
-landTempLine=null;
-
+if(landDrawPoints.length>=2){
+landTempLine=L.polyline(latlngs,{color:"#087f8c",weight:3,dashArray:"6 5"}).addTo(map);
 }
-
-if(
-landDrawPoints.length>=2
-){
-
-landTempLine=
-L.polyline(
-latlngs,
-{
-color:"#087f8c",
-weight:3,
-dashArray:"6 5"
-}
-).addTo(map);
-
-}
-
-
-if(
-landDrawPoints.length>=3
-){
-
-if(landTempPolygon){
-
-map.removeLayer(
-landTempPolygon
-);
-
-}
-
-landTempPolygon=
-L.polygon(
-latlngs,
-{
-color:"#087f8c",
-weight:3,
-fillColor:"#087f8c",
-fillOpacity:.15,
-dashArray:"6 4"
-}
-).addTo(map);
-
-const area=
-calculatePolygonArea(
-landDrawPoints
-);
-
-const perimeter=
-calculatePolygonPerimeter(
-landDrawPoints
-);
-
-document.getElementById(
-"landDrawStatus"
-).textContent=
-landDrawPoints.length+
-" vertices captured.";
-
-document.getElementById(
-"landCalculated"
-).innerHTML=
-"Area: <b>"+
-formatArea(area)+
-"</b><br>"+
-"Perimeter: <b>"+
-formatDistance(perimeter)+
-"</b>";
-
+if(landDrawPoints.length>=3){
+landTempPolygon=L.polygon(latlngs,{color:"#087f8c",weight:3,fillColor:"#087f8c",fillOpacity:.15,dashArray:"6 4"}).addTo(map);
+const area=calculatePolygonArea(landDrawPoints);
+const perimeter=calculatePolygonPerimeter(landDrawPoints);
+document.getElementById("landDrawStatus").textContent=
+landDrawPoints.length+" vertices captured. Right-click for Polygon actions.";
+document.getElementById("landCalculated").innerHTML=
+"Area: <b>"+formatArea(area)+"</b><br>"+
+"Perimeter: <b>"+formatDistance(perimeter)+"</b>";
 }else{
-
-document.getElementById(
-"landDrawStatus"
-).textContent=
-landDrawPoints.length+
-" point(s) captured. Minimum 3 points required.";
-
+document.getElementById("landDrawStatus").textContent=
+landDrawPoints.length+" point(s) captured. Minimum 3 points required.";
+document.getElementById("landCalculated").innerHTML="Area: Not calculated<br>Perimeter: Not calculated";
 }
-
 }
-
 
 /* =====================================================
 LAND FINISH DRAWING
 ===================================================== */
-
 function finishLandDrawing(){
-
-if(
-landDrawPoints.length<3
-){
-
-alert(
-"At least 3 points are required to create a land polygon."
-);
-
+if(landEditingGeometryId){
+finishLandPolygonEdit();
 return;
-
+}
+if(landDrawPoints.length<3){
+alert("At least 3 points are required to create a land polygon.");
+return;
 }
 
 landDrawing=false;
-
-map.off(
-"click",
-landMapClick
-);
-
+landDrawingFinished=true;
+map.off("click",landMapClick);
+map.off("contextmenu",landMapContextMenu);
 map.getContainer().style.cursor="";
+hideLandContextMenu();
 
-if(landTempLine){
-
-map.removeLayer(
-landTempLine
-);
-
-landTempLine=null;
-
+/* Keep one logical copy of the closing vertex in the working geometry. */
+if(landDrawPoints.length>1){
+const first=landDrawPoints[0], last=landDrawPoints[landDrawPoints.length-1];
+if(first.lat===last.lat && first.lng===last.lng){landDrawPoints.pop();}
 }
-
-if(landTempPolygon){
-
-map.removeLayer(
-landTempPolygon
-);
-
-landTempPolygon=null;
-
-}
-
-const area=
-calculatePolygonArea(
-landDrawPoints
-);
-
-const perimeter=
-calculatePolygonPerimeter(
-landDrawPoints
-);
-
-document.getElementById(
-"landDrawStatus"
-).textContent=
-"Polygon completed: "+
-landDrawPoints.length+
-" vertices.";
-
-document.getElementById(
-"landCalculated"
-).innerHTML=
-"Area: <b>"+
-formatArea(area)+
-"</b><br>"+
-"Perimeter: <b>"+
-formatDistance(perimeter)+
-"</b>";
-
-openModal(
-"landModal"
-);
-
-}
-
-
-/* =====================================================
-CANCEL LAND DRAWING
-===================================================== */
-
-function cancelLandDrawing(){
-
-landDrawing=false;
-
-map.off(
-"click",
-landMapClick
-);
-
-map.getContainer().style.cursor="";
-
-landDrawPoints=[];
 
 clearLandTempLayers();
+const closed=landDrawPoints.concat([{...landDrawPoints[0]}]);
+landTempPolygon=L.polygon(closed.map(p=>[p.lat,p.lng]),{
+color:"#087f8c",weight:3,fillColor:"#087f8c",fillOpacity:.18,className:"landPolygon"
+}).addTo(map);
 
-document.getElementById(
-"landDrawStatus"
-).textContent=
-"Drawing cancelled.";
-
+const area=calculatePolygonArea(landDrawPoints);
+const perimeter=calculatePolygonPerimeter(landDrawPoints);
+document.getElementById("landDrawStatus").textContent=
+"Polygon completed: "+landDrawPoints.length+" vertices. Right-click polygon for actions.";
+document.getElementById("landCalculated").innerHTML=
+"Area: <b>"+formatArea(area)+"</b><br>Perimeter: <b>"+formatDistance(perimeter)+"</b>";
+openModal("landModal");
 }
 
-
 /* =====================================================
-CLEAR TEMP LAND LAYERS
+LAND CANCEL / CLEAR
 ===================================================== */
+function cancelLandDrawing(){
+landDrawing=false;
+landDrawingFinished=false;
+map.off("click",landMapClick);
+map.off("contextmenu",landMapContextMenu);
+map.getContainer().style.cursor="";
+hideLandContextMenu();
+landDrawPoints=[];
+landDrawingHistory=[];
+clearLandTempLayers();
+document.getElementById("landDrawStatus").textContent="Drawing cancelled.";
+}
 
 function clearLandTempLayers(){
-
-if(landTempLine){
-
-map.removeLayer(
-landTempLine
-);
-
-landTempLine=null;
-
-}
-
-if(landTempPolygon){
-
-map.removeLayer(
-landTempPolygon
-);
-
-landTempPolygon=null;
-
-}
-
-landTempMarkers.forEach(
-m=>{
-
-try{
-
-map.removeLayer(m);
-
-}catch(e){}
-
-}
-);
-
+if(landTempLine){try{map.removeLayer(landTempLine);}catch(e){} landTempLine=null;}
+if(landTempPolygon){try{map.removeLayer(landTempPolygon);}catch(e){} landTempPolygon=null;}
+landTempMarkers.forEach(m=>{try{map.removeLayer(m);}catch(e){}});
 landTempMarkers=[];
-
 }
-
-
-/* =====================================================
-CLEAR LAND DRAWING
-===================================================== */
 
 function clearLandDrawing(){
-
 landDrawing=false;
-
-map.off(
-"click",
-landMapClick
-);
-
+landDrawingFinished=false;
+map.off("click",landMapClick);
+map.off("contextmenu",landMapContextMenu);
 map.getContainer().style.cursor="";
-
+hideLandContextMenu();
 landDrawPoints=[];
-
+landDrawingHistory=[];
 clearLandTempLayers();
-
 }
 
+/* =====================================================
+POLYGON CONTEXT MENU
+===================================================== */
+function ensureLandContextMenu(){
+if(landContextMenu){return landContextMenu;}
+landContextMenu=document.createElement("div");
+landContextMenu.className="landContextMenu";
+landContextMenu.innerHTML=`
+<button type="button" data-action="edit">✎ Edit Polygon</button>
+<button type="button" data-action="delete" class="danger">🗑 Delete Polygon</button>
+<button type="button" data-action="finish">✓ Finish Polygon</button>`;
+document.body.appendChild(landContextMenu);
+landContextMenu.addEventListener("click",function(e){
+const action=e.target.closest("button")?.dataset.action;
+if(!action){return;}
+const parcel=landContextParcel;
+hideLandContextMenu();
+if(parcel){
+if(action==="edit") editLandPolygonGeometry(parcel);
+else if(action==="delete") deleteLandParcel(parcel.id);
+else if(action==="finish") finishLandPolygonEdit();
+}else{
+if(action==="edit"){
+alert("Polygon editing is available after the polygon is completed/saved.");
+}else if(action==="delete") cancelLandDrawing();
+else if(action==="finish") finishLandDrawing();
+}
+e.stopPropagation();
+});
+return landContextMenu;
+}
+
+function hideLandContextMenu(){
+if(landContextMenu){landContextMenu.style.display="none";}
+landContextParcel=null;
+}
+
+function showLandContextMenu(clientX,clientY,parcel){
+const menu=ensureLandContextMenu();
+landContextParcel=parcel||null;
+menu.style.display="block";
+const pad=6;
+const maxX=window.innerWidth-menu.offsetWidth-pad;
+const maxY=window.innerHeight-menu.offsetHeight-pad;
+menu.style.left=Math.max(pad,Math.min(clientX,maxX))+"px";
+menu.style.top=Math.max(pad,Math.min(clientY,maxY))+"px";
+}
+
+function landMapContextMenu(e){
+if(!landDrawing){return;}
+L.DomEvent.stop(e);
+showLandContextMenu(e.originalEvent.clientX,e.originalEvent.clientY,null);
+}
+
+function bindLandPolygonContextMenu(polygon,parcel){
+polygon.on("contextmenu",function(e){
+L.DomEvent.stop(e);
+showLandContextMenu(e.originalEvent.clientX,e.originalEvent.clientY,parcel);
+});
+}
+
+/* =====================================================
+POLYGON VERTEX EDITING
+===================================================== */
+function sameLandPoint(a,b){
+return a && b && Number(a.lat)===Number(b.lat) && Number(a.lng)===Number(b.lng);
+}
+
+function normalizeLandGeometry(geometry){
+const pts=(geometry||[]).map(p=>({lat:Number(p.lat),lng:Number(p.lng)})).filter(p=>isFinite(p.lat)&&isFinite(p.lng));
+if(pts.length>1 && sameLandPoint(pts[0],pts[pts.length-1])) pts.pop();
+return pts;
+}
+
+function stopLandGeometryEditing(){
+landEditVertexMarkers.forEach(m=>{try{map.removeLayer(m);}catch(e){}});
+landEditVertexMarkers=[];
+landEditingGeometryId=null;
+}
+
+function createLandEditVertexMarkers(){
+landEditVertexMarkers.forEach(m=>{try{map.removeLayer(m);}catch(e){}});
+landEditVertexMarkers=[];
+landDrawPoints.forEach((point,index)=>{
+const marker=L.marker([point.lat,point.lng],{
+draggable:true,
+icon:L.divIcon({className:"landEditVertex",html:"<div style=\"width:14px;height:14px\"></div>",iconSize:[14,14],iconAnchor:[7,7]})
+}).addTo(map);
+marker.on("drag",function(ev){
+const ll=ev.target.getLatLng();
+landDrawPoints[index]={lat:ll.lat,lng:ll.lng};
+updateEditedLandPolygon();
+});
+landEditVertexMarkers.push(marker);
+});
+}
+
+function updateEditedLandPolygon(){
+if(landTempPolygon){try{map.removeLayer(landTempPolygon);}catch(e){}}
+landTempPolygon=null;
+if(landDrawPoints.length>=3){
+landTempPolygon=L.polygon(landDrawPoints.map(p=>[p.lat,p.lng]),{
+color:"#f59e0b",weight:4,fillColor:"#f59e0b",fillOpacity:.20,dashArray:"6 4"
+}).addTo(map);
+const area=calculatePolygonArea(landDrawPoints);
+const perimeter=calculatePolygonPerimeter(landDrawPoints);
+document.getElementById("landDrawStatus").textContent=
+landDrawPoints.length+" editable vertices. Drag vertices to reshape.";
+document.getElementById("landCalculated").innerHTML=
+"Area: <b>"+formatArea(area)+"</b><br>Perimeter: <b>"+formatDistance(perimeter)+"</b>";
+}
+}
+
+function editLandPolygonGeometry(parcel){
+if(!parcel || !parcel.geometry || normalizeLandGeometry(parcel.geometry).length<3){
+alert("A valid polygon with at least 3 vertices is required for editing.");
+return;
+}
+landDrawing=false;
+landEditingGeometryId=parcel.id;
+landDrawPoints=normalizeLandGeometry(parcel.geometry);
+hideLandContextMenu();
+clearLandTempLayers();
+createLandEditVertexMarkers();
+updateEditedLandPolygon();
+map.fitBounds(L.latLngBounds(landDrawPoints.map(p=>[p.lat,p.lng])),{padding:[50,50],maxZoom:18});
+document.getElementById("landDrawStatus").textContent=
+landDrawPoints.length+" editable vertices. Drag vertices, then right-click polygon and choose Finish Polygon.";
+}
+
+function finishLandPolygonEdit(){
+if(!landEditingGeometryId){
+if(landDrawing){finishLandDrawing();}
+return;
+}
+if(landDrawPoints.length<3){
+alert("At least 3 vertices are required.");
+return;
+}
+const index=landParcels.findIndex(p=>String(p.id)===String(landEditingGeometryId));
+if(index===-1){alert("Land parcel not found.");return;}
+const openGeometry=normalizeLandGeometry(landDrawPoints);
+const geometry=openGeometry.concat([{...openGeometry[0]}]);
+const area=calculatePolygonArea(openGeometry);
+const perimeter=calculatePolygonPerimeter(openGeometry);
+landParcels[index]={...landParcels[index],geometry,areaSqM:area,areaHectare:area/10000,areaAcre:area/4046.8564224,perimeterM:perimeter,updatedAt:new Date().toISOString()};
+saveLandData();
+stopLandGeometryEditing();
+clearLandTempLayers();
+landDrawPoints=[];
+loadLandParcels();
+hideLandContextMenu();
+document.getElementById("landDrawStatus").textContent="Polygon edit completed and saved.";
+alert("Polygon updated successfully.");
+}
+
+document.addEventListener("keydown",function(e){
+if((e.ctrlKey||e.metaKey) && String(e.key).toLowerCase()==="z"){
+if(landDrawing && !landDrawingFinished){e.preventDefault();undoLastLandVertex();}
+}
+});
+document.addEventListener("click",function(e){
+if(landContextMenu && !landContextMenu.contains(e.target)) hideLandContextMenu();
+});
 
 /* =====================================================
 FORMAT AREA
@@ -5306,13 +5275,10 @@ When editing, use existing geometry
 if the user did not redraw it.
 */
 
-let geometry=
-landDrawPoints.map(
-p=>({
-lat:Number(p.lat),
-lng:Number(p.lng)
-})
-);
+let geometry=normalizeLandGeometry(landDrawPoints);
+if(geometry.length>=3){
+geometry=geometry.concat([{...geometry[0]}]);
+}
 
 
 if(
@@ -5573,6 +5539,8 @@ polygon.openPopup();
 
 }
 );
+
+bindLandPolygonContextMenu(polygon,parcel);
 
 }
 
@@ -6541,6 +6509,13 @@ clearLandDrawing();
 
 }
 
+if(landEditingGeometryId){
+stopLandGeometryEditing();
+clearLandTempLayers();
+}
+
+hideLandContextMenu();
+
 closeAllModals();
 
 }
@@ -6600,6 +6575,18 @@ finishLandDrawing;
 
 window.cancelLandDrawing=
 cancelLandDrawing;
+
+window.undoLastLandVertex=
+undoLastLandVertex;
+
+window.editLandPolygonGeometry=
+editLandPolygonGeometry;
+
+window.finishLandPolygonEdit=
+finishLandPolygonEdit;
+
+window.hideLandContextMenu=
+hideLandContextMenu;
 
 window.saveLandParcel=
 saveLandParcel;
